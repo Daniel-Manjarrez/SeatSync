@@ -1,4 +1,4 @@
-# SeatSync --- Engineering Software-as-a-Service Project
+# SeatSync — Engineering Software-as-a-Service Project
 
 ### Team Members
 
