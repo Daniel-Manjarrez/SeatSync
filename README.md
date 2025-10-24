@@ -2,7 +2,7 @@
 
 ### Team Members
 
-| Name   | ID  |
+| Name   | UNI  |
 |--------|-----|
 | Daniel Manjarrez    | dam2274 |
 | Brandon Pae  | btp2109 |
