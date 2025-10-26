@@ -1,5 +1,7 @@
 # SeatSync — Engineering Software-as-a-Service Project
 
+SeatSync is a receipt tracking application that allows users to upload receipt images, automatically extract meal information (date, time, and food items), and view their expense history on a dashboard.
+
 ### Team Members
 
 | Name   | UNI  |
@@ -11,19 +13,85 @@
 
 ---
 
-## How to Run and Test the Project
+## Table of Contents
+- [Running the Application Locally](#running-the-application-locally)
+- [Running Tests](#running-tests)
+  - [RSpec Unit Tests](#running-rspec-tests)
+  - [Cucumber Integration Tests](#running-cucumber-tests)
 
-Follow the steps below to set up and run the project on your local machine:
+---
+
+## Running the Application Locally
+
+### Prerequisites
+- Ruby 3.3.8
+- Rails 8.0
+- SQLite3 (for development/test)
+- Bundler
+
+### Setup Instructions
 
 1. **Clone the Repository**
    ```bash
    git clone https://github.com/your-username/your-repo.git
+   cd SeatSync
+   ```
 
-Follow the steps below to set up and test the project on your local machine:
-
-1. **Clone the Repository**
+2. **Install Dependencies**
    ```bash
-   git clone https://github.com/your-username/your-repo.git
+   bundle install
+   ```
+
+3. **Setup Database**
+   ```bash
+   # Create the database
+   rails db:create
+
+   # Run migrations
+   rails db:migrate
+
+   # (Optional) Seed with sample data
+   rails db:seed
+   ```
+
+4. **Start the Rails Server**
+   ```bash
+   rails server
+   ```
+
+5. **Access the Application**
+
+   Open your web browser and navigate to:
+   ```
+   http://localhost:3000
+   ```
+
+   You should be automatically redirected to the receipts dashboard at:
+   ```
+   http://localhost:3000/receipts
+   ```
+
+### Using the Application
+
+#### Upload a Receipt
+1. Click "Upload New Receipt" on the dashboard
+2. Select a receipt image (JPG, PNG, or HEIC format)
+3. Click "Upload Photo"
+4. View the extracted information on the dashboard
+
+#### View Receipt History
+- The dashboard displays all uploaded receipts with:
+  - Date
+  - Time
+  - List of food items
+- Click "View" to see individual receipt details and the original image
+
+#### Sample Data
+If you ran `rails db:seed`, you'll see 5 sample receipts with various meal data for testing.
+
+---
+
+## Running Tests
 
 ## Running RSpec Tests
 

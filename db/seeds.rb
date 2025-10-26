@@ -6,17 +6,37 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-movies = [{ title: 'Aladdin', rating: 'G', release_date: '25-Nov-1992' },
-          { title: 'The Terminator', rating: 'R', release_date: '26-Oct-1984' },
-          { title: 'When Harry Met Sally', rating: 'R', release_date: '21-Jul-1989' },
-          { title: 'The Help', rating: 'PG-13', release_date: '10-Aug-2011' },
-          { title: 'Chocolat', rating: 'PG-13', release_date: '5-Jan-2001' },
-          { title: 'Amelie', rating: 'R', release_date: '25-Apr-2001' },
-          { title: '2001: A Space Odyssey', rating: 'G', release_date: '6-Apr-1968' },
-          { title: 'The Incredibles', rating: 'PG', release_date: '5-Nov-2004' },
-          { title: 'Raiders of the Lost Ark', rating: 'PG', release_date: '12-Jun-1981' },
-          { title: 'Chicken Run', rating: 'G', release_date: '21-Jun-2000' }]
+# Sample receipt data for testing
+receipts = [
+  {
+    receipt_date: Date.parse('2025-01-15'),
+    receipt_time: '08:00',
+    order_items: ['Coffee', 'Croissant', 'Orange Juice']
+  },
+  {
+    receipt_date: Date.parse('2025-01-15'),
+    receipt_time: '12:30',
+    order_items: ['Burger', 'Fries', 'Soda']
+  },
+  {
+    receipt_date: Date.parse('2025-01-15'),
+    receipt_time: '18:00',
+    order_items: ['Salmon', 'Broccoli', 'Rice']
+  },
+  {
+    receipt_date: Date.parse('2025-01-16'),
+    receipt_time: '08:00',
+    order_items: ['Pancakes', 'Eggs', 'Bacon']
+  },
+  {
+    receipt_date: Date.parse('2025-01-16'),
+    receipt_time: '12:00',
+    order_items: ['Caesar Salad', 'Garlic Bread']
+  }
+]
 
-movies.each do |movie|
-  Movie.create!(movie)
+receipts.each do |receipt|
+  Receipt.create!(receipt)
 end
+
+puts "Created #{Receipt.count} sample receipts"

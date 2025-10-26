@@ -2,4 +2,4 @@
 require File.expand_path('application', __dir__)
 
 # Initialize the rails application
-Rottenpotatoes::Application.initialize!
+SeatSync::Application.initialize!
