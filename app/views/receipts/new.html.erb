@@ -1,0 +1,12 @@
+<h1>Upload Receipt</h1>
+
+<%= form_with(model: @receipt, url: receipts_path, local: true) do |form| %>
+  <div class="form-group">
+    <%= form.label :image, "Receipt Image" %>
+    <%= form.file_field :image, accept: 'image/*', required: true, id: 'receipt_image' %>
+  </div>
+
+  <%= form.submit "Upload Photo", class: 'btn btn-primary' %>
+<% end %>
+
+<%= link_to 'Back to Dashboard', receipts_path %>

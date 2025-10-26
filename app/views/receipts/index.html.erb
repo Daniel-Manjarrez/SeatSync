@@ -1,0 +1,28 @@
+<h1>Receipt Dashboard</h1>
+
+<%= link_to 'Upload New Receipt', new_receipt_path, class: 'btn btn-primary' %>
+
+<% if @receipts.any? %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Items</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @receipts.each do |receipt| %>
+        <tr>
+          <td><%= receipt.receipt_date %></td>
+          <td><%= receipt.receipt_time %></td>
+          <td><%= receipt.order_items.join(', ') %></td>
+          <td><%= link_to 'View', receipt_path(receipt) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No receipts uploaded yet.</p>
+<% end %>

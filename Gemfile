@@ -26,6 +26,7 @@ group :development, :test do
 
   gem 'rspec-rails'
   gem 'guard-rspec'
+  gem 'rails-controller-testing'
 
   # Use sqlite3 as the database for Active Record
   gem 'sqlite3', '~> 2.1'
