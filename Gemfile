@@ -1,6 +1,8 @@
 source 'https://rubygems.org'
 
-ruby '3.3.8'
+ruby '3.3'
+
+gem 'rtesseract'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '8.0'
