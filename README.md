@@ -33,7 +33,7 @@ SeatSync is a receipt tracking application that allows users to upload receipt i
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/your-username/your-repo.git
+   git clone https://github.com/your-username/SeatSync.git
    cd SeatSync
    ```
 
