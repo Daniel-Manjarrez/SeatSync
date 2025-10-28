@@ -124,7 +124,7 @@ bundle exec rspec spec/services/receipt_parser_spec.rb:11
 
 ### Expected Output
 ```
-18 examples, 0 failures
+1 examples, 0 failures
 ```
 
 ## Running Cucumber Tests
