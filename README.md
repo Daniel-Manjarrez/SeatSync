@@ -115,11 +115,11 @@ RAILS_ENV=test rails db:migrate
 bundle exec rspec
 
 # Run specific test file
-bundle exec rspec spec/models/receipt_spec.rb
+bundle exec rspec spec/services/receipt_parser_spec.rb
 bundle exec rspec spec/controllers/receipts_controller_spec.rb
 
 # Run specific test by line number
-bundle exec rspec spec/models/receipt_spec.rb:10
+bundle exec rspec spec/services/receipt_parser_spec.rb:11
 ```
 
 ### Expected Output
