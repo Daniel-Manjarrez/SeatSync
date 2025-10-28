@@ -24,7 +24,7 @@ SeatSync is a receipt tracking application that allows users to upload receipt i
 ## Running the Application Locally
 
 ### Prerequisites
-- Ruby 3.3.8
+- Ruby 3.3
 - Rails 8.0
 - SQLite3 (for development/test)
 - Bundler
