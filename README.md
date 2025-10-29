@@ -180,7 +180,7 @@ bundle exec rspec spec/controllers/receipts_controller_spec.rb
 bundle exec rspec spec/services/receipt_parser_spec.rb:11
 ```
 
-### Expected Output for Running All RSpec Test
+### Expected Output for Running All RSpec Tests
 ```
 18 examples, 0 failures
 ```
