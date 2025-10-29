@@ -203,7 +203,7 @@ bundle exec cucumber features/upload_receipt.feature
 bundle exec cucumber features/upload_receipt.feature:6
 ```
 
-### Expected Output
+### Expected Output for Running All Cucumber Tests
 ```
 10 scenarios (10 passed)
 75 steps (75 passed)
