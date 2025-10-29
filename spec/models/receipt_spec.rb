@@ -61,3 +61,4 @@ RSpec.describe Receipt, type: :model do
     end
   end
 end
+
