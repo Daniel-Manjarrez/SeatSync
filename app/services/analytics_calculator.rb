@@ -53,12 +53,16 @@ class AnalyticsCalculator
   def daily_revenue(days = 30)
     start_date = Date.today - days.days
     
-    @receipts
+    grouped = @receipts
       .select { |r| r.receipt_date >= start_date }
       .group_by { |r| r.receipt_date.strftime('%b %d') }
       .transform_values { |receipts| calculate_revenue_for_receipts(receipts) }
-      .sort_by { |date, _| Date.parse(date + " #{Date.today.year}") }
-      .to_h
+    
+    # Return as-is if grouping worked
+    return grouped if grouped.any?
+    
+    # Otherwise return empty hash
+    {}
   end
   
   def weekly_revenue(weeks = 8)
