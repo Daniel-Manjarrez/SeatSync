@@ -13,6 +13,14 @@ SeatSync is a receipt tracking application that allows users to upload receipt i
 
 ---
 
+## 🚀 Live Deployment
+
+The application is deployed on Heroku and can be accessed at:
+
+**[https://fierce-scrubland-45377-5e74d2d7f81b.herokuapp.com/dashboard](https://fierce-scrubland-45377-5e74d2d7f81b.herokuapp.com/dashboard)**
+
+---
+
 ## Table of Contents
 - [Running the Application Locally](#running-the-application-locally)
 - [Running Tests](#running-tests)
@@ -126,6 +134,23 @@ If you ran `rails db:seed`, you'll see 5 sample receipts with various meal data 
 
 ## Running Tests
 
+### Test File Locations
+
+**RSpec Unit Tests** are located in:
+- `spec/controllers/` - Controller tests
+- `spec/models/` - Model tests
+- `spec/services/` - Service tests
+
+**Cucumber Integration Tests** are located in:
+- `features/*.feature` - Feature files with test scenarios
+  - `features/analytics.feature` - Analytics calculation tests
+  - `features/dashboard.feature` - Dashboard display tests
+  - `features/dashboard_navigation.feature` - Navigation tests
+  - `features/upload_receipt.feature` - Receipt upload tests
+- `features/step_definitions/` - Step definition implementations
+
+---
+
 ## Running RSpec Tests
 
 ### One-Time Setup
@@ -180,8 +205,8 @@ bundle exec cucumber features/upload_receipt.feature:6
 
 ### Expected Output
 ```
-2 scenarios (2 passed)
-14 steps (14 passed)
+10 scenarios (10 passed)
+75 steps (75 passed)
 ```
 
 ### Run All Tests (RSpec + Cucumber)
