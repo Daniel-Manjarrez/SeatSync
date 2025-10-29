@@ -12,7 +12,6 @@ gem 'sass-rails', '~> 5.0'
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 
-
 # Use Unicorn as the app server
 # gem 'unicorn'
 

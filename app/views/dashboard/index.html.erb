@@ -1,0 +1,769 @@
+<% 
+  # Tab selection logic
+  current_tab = params[:tab] || 'overview'
+%>
+
+<div class="dashboard-container">
+  <!-- Sidebar Navigation -->
+  <div class="sidebar" id="sidebar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar" onclick="toggleSidebar()">
+      <svg class="toggle-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="18" height="18" x="3" y="3" rx="2"/>
+        <path d="M9 3v18"/>
+        <path d="m14 9 3 3-3 3"/>
+      </svg>
+    </button>
+    
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-icon">🍽️</div>
+        <span class="logo-text">SeatSync</span>
+      </div>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <%= link_to dashboard_path, class: 'nav-item active' do %>
+        <span class="nav-content">
+          <span class="nav-text">Restaurant Analytics</span>
+        </span>
+        <div class="nav-marquee">
+          <div class="marquee-inner">
+            <span>Restaurant Analytics</span>
+            <span>Restaurant Analytics</span>
+            <span>Restaurant Analytics</span>
+            <span>Restaurant Analytics</span>
+          </div>
+        </div>
+      <% end %>
+      
+      <%= link_to new_receipt_path, class: 'nav-item' do %>
+        <span class="nav-content">
+          <span class="nav-text">Upload Images</span>
+        </span>
+        <div class="nav-marquee">
+          <div class="marquee-inner">
+            <span>Upload Images</span>
+            <span>Upload Images</span>
+            <span>Upload Images</span>
+            <span>Upload Images</span>
+          </div>
+        </div>
+      <% end %>
+      
+      <%= link_to ingredients_path, class: 'nav-item' do %>
+        <span class="nav-content">
+          <span class="nav-text">Ingredients Dashboard</span>
+        </span>
+        <div class="nav-marquee">
+          <div class="marquee-inner">
+            <span>Ingredients Dashboard</span>
+            <span>Ingredients Dashboard</span>
+            <span>Ingredients Dashboard</span>
+            <span>Ingredients Dashboard</span>
+          </div>
+        </div>
+      <% end %>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" id="mainContent">
+    <!-- Header with Growth Metrics -->
+    <div class="dashboard-header">
+      <div>
+        <h1 class="dashboard-title">Restaurant Analytics</h1>
+        <p class="dashboard-subtitle">Real-time performance metrics and insights</p>
+      </div>
+      <div class="growth-badges">
+        <div class="growth-badge positive">
+          <span class="growth-label">WoW</span>
+          <span class="growth-value">+<%= @week_over_week_growth %>%</span>
+        </div>
+        <div class="growth-badge positive">
+          <span class="growth-label">MoM</span>
+          <span class="growth-value">+<%= @month_over_month_growth %>%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+      <%= link_to 'Overview', dashboard_path(tab: 'overview'), class: "tab-btn #{current_tab == 'overview' ? 'active' : ''}" %>
+      <%= link_to 'Revenue Analysis', dashboard_path(tab: 'revenue'), class: "tab-btn #{current_tab == 'revenue' ? 'active' : ''}" %>
+      <%= link_to 'Menu Performance', dashboard_path(tab: 'menu'), class: "tab-btn #{current_tab == 'menu' ? 'active' : ''}" %>
+      <%= link_to 'Timing & Operations', dashboard_path(tab: 'timing'), class: "tab-btn #{current_tab == 'timing' ? 'active' : ''}" %>
+    </div>
+
+    <!-- Tab Content -->
+    <% if current_tab == 'overview' %>
+      <!-- OVERVIEW TAB -->
+      <div class="tab-content active">
+        <!-- Top Metrics Cards -->
+        <div class="metrics-row">
+          <div class="metric-card">
+            <div class="metric-content">
+              <div class="metric-label">Total Orders</div>
+              <div class="metric-value-container">
+                <span class="metric-value"><%= @total_orders %></span>
+                <span class="metric-unit">orders</span>
+              </div>
+            </div>
+            <div class="metric-icon accent-emerald">📊</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-content">
+              <div class="metric-label">Occupancy Rate</div>
+              <div class="metric-value-container">
+                <span class="metric-value"><%= @occupancy_rate %></span>
+                <span class="metric-unit">%</span>
+              </div>
+            </div>
+            <div class="metric-icon accent-emerald">🪑</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-content">
+              <div class="metric-label">Avg Order Size</div>
+              <div class="metric-value-container">
+                <span class="metric-value"><%= @average_order_size %></span>
+                <span class="metric-unit">items</span>
+              </div>
+            </div>
+            <div class="metric-icon accent-emerald">🛒</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-content">
+              <div class="metric-label">Avg Spend</div>
+              <div class="metric-value-container">
+                <span class="metric-value">$<%= @average_spend %></span>
+                <span class="metric-unit">per order</span>
+              </div>
+            </div>
+            <div class="metric-icon accent-emerald">💰</div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Daily Revenue Trend (Last 30 Days)</h3>
+            </div>
+            <div class="chart-wrapper">
+              <div class="chart-with-axes">
+                <div class="y-axis">
+                  <span class="y-label">$2000</span>
+                  <span class="y-label">$1500</span>
+                  <span class="y-label">$1000</span>
+                  <span class="y-label">$500</span>
+                  <span class="y-label">$0</span>
+                </div>
+                <div class="chart-area">
+                  <svg viewBox="0 0 400 200" class="revenue-chart">
+                    <defs>
+                      <linearGradient id="revenueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#001d06;stop-opacity:0.3" />
+                        <stop offset="100%" style="stop-color:#001d06;stop-opacity:0.05" />
+                      </linearGradient>
+                    </defs>
+                    <!-- Grid lines -->
+                    <line x1="0" y1="0" x2="400" y2="0" stroke="#334155" stroke-width="1" />
+                    <line x1="0" y1="50" x2="400" y2="50" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="100" x2="400" y2="100" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="150" x2="400" y2="150" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="200" x2="400" y2="200" stroke="#334155" stroke-width="1" />
+                    
+                    <polyline fill="url(#revenueGradient)" stroke="none" points="0,180 20,165 40,170 60,155 80,145 100,130 120,135 140,150 160,140 180,125 200,115 220,105 240,95 260,85 280,75 300,70 320,65 340,55 360,50 380,45 380,200 0,200" />
+                    <polyline fill="none" stroke="#001d06" stroke-width="3" points="0,180 20,165 40,170 60,155 80,145 100,130 120,135 140,150 160,140 180,125 200,115 220,105 240,95 260,85 280,75 300,70 320,65 340,55 360,50 380,45" />
+                  </svg>
+                  <div class="x-axis">
+                    <span class="x-label">Oct 1</span>
+                    <span class="x-label">Oct 10</span>
+                    <span class="x-label">Oct 20</span>
+                    <span class="x-label">Oct 28</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Customer Timing - Orders by Hour</h3>
+            </div>
+            <div class="chart-wrapper">
+              <div class="chart-with-axes">
+                <div class="y-axis">
+                  <span class="y-label">25</span>
+                  <span class="y-label">20</span>
+                  <span class="y-label">15</span>
+                  <span class="y-label">10</span>
+                  <span class="y-label">5</span>
+                  <span class="y-label">0</span>
+                </div>
+                <div class="chart-area">
+                  <svg viewBox="0 0 400 200" class="timing-chart">
+                    <defs>
+                      <linearGradient id="timingGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#001d06;stop-opacity:0.3" />
+                        <stop offset="100%" style="stop-color:#001d06;stop-opacity:0.05" />
+                      </linearGradient>
+                    </defs>
+                    <!-- Grid lines -->
+                    <line x1="0" y1="0" x2="400" y2="0" stroke="#334155" stroke-width="1" />
+                    <line x1="0" y1="40" x2="400" y2="40" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="80" x2="400" y2="80" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="160" x2="400" y2="160" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="200" x2="400" y2="200" stroke="#334155" stroke-width="1" />
+                    
+                    <polyline fill="url(#timingGradient)" stroke="none" points="0,180 40,170 80,160 120,140 160,180 200,175 240,120 280,90 320,100 360,130 380,160 400,180 400,200 0,200" />
+                    <polyline fill="none" stroke="#001d06" stroke-width="3" points="0,180 40,170 80,160 120,140 160,180 200,175 240,120 280,90 320,100 360,130 380,160 400,180" />
+                  </svg>
+                  <div class="x-axis">
+                    <span class="x-label">11 AM</span>
+                    <span class="x-label">2 PM</span>
+                    <span class="x-label">5 PM</span>
+                    <span class="x-label">8 PM</span>
+                    <span class="x-label">10 PM</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Second Row -->
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Revenue by Day of Week</h3>
+            </div>
+            <div class="chart-wrapper">
+              <div class="fake-chart bar-chart">
+                <% [65, 58, 68, 75, 95, 100, 82].each_with_index do |height, i| %>
+                  <div class="bar-group">
+                    <div class="bar" style="height: <%= height %>%"></div>
+                    <div class="bar-label"><%= %w[Mon Tue Wed Thu Fri Sat Sun][i] %></div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Price Point Distribution</h3>
+            </div>
+            <div class="chart-wrapper">
+              <div class="fake-chart pie-chart">
+                <svg viewBox="0 0 200 200">
+                  <circle cx="100" cy="100" r="80" fill="#001d06" />
+                  <circle cx="100" cy="100" r="80" fill="#003d0d" stroke="#1e293b" stroke-width="2" stroke-dasharray="150 400" transform="rotate(-90 100 100)" />
+                  <circle cx="100" cy="100" r="80" fill="#10b981" stroke="#1e293b" stroke-width="2" stroke-dasharray="100 400" stroke-dashoffset="-150" transform="rotate(-90 100 100)" />
+                  <circle cx="100" cy="100" r="80" fill="#34d399" stroke="#1e293b" stroke-width="2" stroke-dasharray="75 400" stroke-dashoffset="-250" transform="rotate(-90 100 100)" />
+                  <circle cx="100" cy="100" r="80" fill="#6ee7b7" stroke="#1e293b" stroke-width="2" stroke-dasharray="50 400" stroke-dashoffset="-325" transform="rotate(-90 100 100)" />
+                  <circle cx="100" cy="100" r="80" fill="#a7f3d0" stroke="#1e293b" stroke-width="2" stroke-dasharray="25 400" stroke-dashoffset="-375" transform="rotate(-90 100 100)" />
+                </svg>
+                <div class="pie-legend">
+                  <div class="legend-item"><span class="legend-color" style="background:#001d06"></span> $0-10 (12)</div>
+                  <div class="legend-item"><span class="legend-color" style="background:#003d0d"></span> $10-20 (28)</div>
+                  <div class="legend-item"><span class="legend-color" style="background:#10b981"></span> $20-30 (35)</div>
+                  <div class="legend-item"><span class="legend-color" style="background:#34d399"></span> $30-40 (18)</div>
+                  <div class="legend-item"><span class="legend-color" style="background:#6ee7b7"></span> $40-50 (15)</div>
+                  <div class="legend-item"><span class="legend-color" style="background:#a7f3d0"></span> $50+ (8)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <% elsif current_tab == 'revenue' %>
+      <!-- REVENUE ANALYSIS TAB -->
+      <div class="tab-content active">
+        <div class="charts-row-full">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Monthly Revenue Trend</h3>
+              <p class="chart-subtitle">Last 12 months - Showing growth pattern</p>
+            </div>
+            <div class="chart-wrapper-large">
+              <div class="chart-with-axes">
+                <div class="y-axis">
+                  <span class="y-label">$50k</span>
+                  <span class="y-label">$40k</span>
+                  <span class="y-label">$30k</span>
+                  <span class="y-label">$20k</span>
+                  <span class="y-label">$10k</span>
+                  <span class="y-label">$0</span>
+                </div>
+                <div class="chart-area">
+                  <svg viewBox="0 0 600 300" class="monthly-chart">
+                    <defs>
+                      <linearGradient id="monthlyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#001d06;stop-opacity:0.3" />
+                        <stop offset="100%" style="stop-color:#001d06;stop-opacity:0.05" />
+                      </linearGradient>
+                    </defs>
+                    <!-- Grid lines -->
+                    <line x1="0" y1="0" x2="600" y2="0" stroke="#334155" stroke-width="1" />
+                    <line x1="0" y1="60" x2="600" y2="60" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="120" x2="600" y2="120" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="180" x2="600" y2="180" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="240" x2="600" y2="240" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="300" x2="600" y2="300" stroke="#334155" stroke-width="1" />
+                    
+                    <polyline fill="url(#monthlyGradient)" stroke="none" points="0,250 50,230 100,220 150,210 200,200 250,190 300,175 350,160 400,150 450,140 500,125 550,110 600,95 600,300 0,300" />
+                    <polyline fill="none" stroke="#001d06" stroke-width="4" points="0,250 50,230 100,220 150,210 200,200 250,190 300,175 350,160 400,150 450,140 500,125 550,110 600,95" />
+                    <% 12.times do |i| %>
+                      <circle cx="<%= 50 * i %>" cy="<%= 250 - (i * 13) %>" r="5" fill="#10b981" stroke="#001d06" stroke-width="2" />
+                    <% end %>
+                  </svg>
+                  <div class="x-axis">
+                    <span class="x-label">Nov 23</span>
+                    <span class="x-label">Feb 24</span>
+                    <span class="x-label">May 24</span>
+                    <span class="x-label">Aug 24</span>
+                    <span class="x-label">Oct 24</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Weekly Revenue Trend</h3>
+              <p class="chart-subtitle">Last 8 weeks</p>
+            </div>
+            <div class="chart-wrapper">
+              <div class="chart-with-axes">
+                <div class="y-axis">
+                  <span class="y-label">$12k</span>
+                  <span class="y-label">$10k</span>
+                  <span class="y-label">$8k</span>
+                  <span class="y-label">$6k</span>
+                  <span class="y-label">$4k</span>
+                  <span class="y-label">$0</span>
+                </div>
+                <div class="chart-area">
+                  <div class="fake-chart bar-chart">
+                    <% [75, 82, 78, 85, 92, 88, 95, 98].each_with_index do |height, i| %>
+                      <div class="bar-group">
+                        <div class="bar" style="height: <%= height %>%"></div>
+                        <div class="bar-label">W<%= i + 1 %></div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Revenue by Meal Period</h3>
+            </div>
+            <div class="chart-wrapper">
+              <div class="fake-chart horizontal-bar-chart">
+                <div class="h-bar-item">
+                  <span class="h-bar-label">Breakfast</span>
+                  <div class="h-bar-track">
+                    <div class="h-bar-fill" style="width: 40%; background: #001d06;"></div>
+                    <span class="h-bar-value">$12,500</span>
+                  </div>
+                </div>
+                <div class="h-bar-item">
+                  <span class="h-bar-label">Lunch</span>
+                  <div class="h-bar-track">
+                    <div class="h-bar-fill" style="width: 65%; background: #003d0d;"></div>
+                    <span class="h-bar-value">$18,900</span>
+                  </div>
+                </div>
+                <div class="h-bar-item">
+                  <span class="h-bar-label">Dinner</span>
+                  <div class="h-bar-track">
+                    <div class="h-bar-fill" style="width: 100%; background: #10b981;"></div>
+                    <span class="h-bar-value">$28,600</span>
+                  </div>
+                </div>
+                <div class="h-bar-item">
+                  <span class="h-bar-label">Late Night</span>
+                  <div class="h-bar-track">
+                    <div class="h-bar-fill" style="width: 18%; background: #34d399;"></div>
+                    <span class="h-bar-value">$5,000</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Revenue by Category</h3>
+            </div>
+            <div class="chart-wrapper">
+              <div class="fake-chart pie-chart">
+                <svg viewBox="0 0 200 200">
+                  <circle cx="100" cy="100" r="80" fill="#001d06" />
+                  <circle cx="100" cy="100" r="80" fill="#003d0d" stroke="#1e293b" stroke-width="2" stroke-dasharray="180 502" transform="rotate(-90 100 100)" />
+                  <circle cx="100" cy="100" r="80" fill="#10b981" stroke="#1e293b" stroke-width="2" stroke-dasharray="120 502" stroke-dashoffset="-180" transform="rotate(-90 100 100)" />
+                  <circle cx="100" cy="100" r="80" fill="#34d399" stroke="#1e293b" stroke-width="2" stroke-dasharray="80 502" stroke-dashoffset="-300" transform="rotate(-90 100 100)" />
+                  <circle cx="100" cy="100" r="80" fill="#6ee7b7" stroke="#1e293b" stroke-width="2" stroke-dasharray="60 502" stroke-dashoffset="-380" transform="rotate(-90 100 100)" />
+                </svg>
+                <div class="pie-legend">
+                  <div class="legend-item"><span class="legend-color" style="background:#001d06"></span> Entrees $28,600</div>
+                  <div class="legend-item"><span class="legend-color" style="background:#003d0d"></span> Appetizers $8,500</div>
+                  <div class="legend-item"><span class="legend-color" style="background:#10b981"></span> Beverages $7,800</div>
+                  <div class="legend-item"><span class="legend-color" style="background:#34d399"></span> Desserts $6,200</div>
+                  <div class="legend-item"><span class="legend-color" style="background:#6ee7b7"></span> Sides $4,900</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Average Check by Time of Day</h3>
+            </div>
+            <div class="chart-wrapper">
+              <div class="chart-with-axes">
+                <div class="y-axis">
+                  <span class="y-label">$35</span>
+                  <span class="y-label">$30</span>
+                  <span class="y-label">$25</span>
+                  <span class="y-label">$20</span>
+                  <span class="y-label">$15</span>
+                  <span class="y-label">$10</span>
+                </div>
+                <div class="chart-area">
+                  <svg viewBox="0 0 400 200" class="check-chart">
+                    <!-- Grid lines -->
+                    <line x1="0" y1="0" x2="400" y2="0" stroke="#334155" stroke-width="1" />
+                    <line x1="0" y1="40" x2="400" y2="40" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="80" x2="400" y2="80" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="160" x2="400" y2="160" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="200" x2="400" y2="200" stroke="#334155" stroke-width="1" />
+                    
+                    <polyline fill="none" stroke="#10b981" stroke-width="3" points="0,150 40,140 80,135 120,125 160,140 200,110 240,85 280,95 320,115 360,130 400,140" />
+                    <% 11.times do |i| %>
+                      <circle cx="<%= 40 * i %>" cy="<%= [150,140,135,125,140,110,85,95,115,130,140][i] %>" r="4" fill="#10b981" />
+                    <% end %>
+                  </svg>
+                  <div class="x-axis">
+                    <span class="x-label">11 AM</span>
+                    <span class="x-label">2 PM</span>
+                    <span class="x-label">5 PM</span>
+                    <span class="x-label">8 PM</span>
+                    <span class="x-label">10 PM</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekday vs Weekend Comparison -->
+        <div class="comparison-cards">
+          <div class="compare-card">
+            <h4>Weekday Performance</h4>
+            <div class="compare-stats">
+              <div class="compare-stat">
+                <span class="stat-label">Revenue</span>
+                <span class="stat-value">$<%= number_with_delimiter(@weekday_revenue) %></span>
+              </div>
+              <div class="compare-stat">
+                <span class="stat-label">Orders</span>
+                <span class="stat-value"><%= @weekday_orders %></span>
+              </div>
+              <div class="compare-stat">
+                <span class="stat-label">Avg per Order</span>
+                <span class="stat-value">$<%= (@weekday_revenue.to_f / @weekday_orders).round(2) %></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="compare-card">
+            <h4>Weekend Performance</h4>
+            <div class="compare-stats">
+              <div class="compare-stat">
+                <span class="stat-label">Revenue</span>
+                <span class="stat-value">$<%= number_with_delimiter(@weekend_revenue) %></span>
+              </div>
+              <div class="compare-stat">
+                <span class="stat-label">Orders</span>
+                <span class="stat-value"><%= @weekend_orders %></span>
+              </div>
+              <div class="compare-stat">
+                <span class="stat-label">Avg per Order</span>
+                <span class="stat-value">$<%= (@weekend_revenue.to_f / @weekend_orders).round(2) %></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <% elsif current_tab == 'menu' %>
+      <!-- MENU PERFORMANCE TAB -->
+      <div class="tab-content active">
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Top 10 Most Popular Items</h3>
+              <p class="chart-subtitle">Order frequency</p>
+            </div>
+            <div class="chart-wrapper">
+              <div class="two-column-list">
+                <div class="column">
+                  <% @most_popular_items.first(5).each_with_index do |item, i| %>
+                    <div class="list-item">
+                      <span class="item-rank"><%= i + 1 %>.</span>
+                      <span class="item-name"><%= item[:name] %></span>
+                      <span class="item-count"><%= item[:count] %></span>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="column">
+                  <% @most_popular_items[5..9].each_with_index do |item, i| %>
+                    <div class="list-item">
+                      <span class="item-rank"><%= i + 6 %>.</span>
+                      <span class="item-name"><%= item[:name] %></span>
+                      <span class="item-count"><%= item[:count] %></span>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Bottom 10 Least Popular Items</h3>
+              <p class="chart-subtitle">Consider removing</p>
+            </div>
+            <div class="chart-wrapper">
+              <div class="two-column-list">
+                <div class="column">
+                  <% @least_popular_items.first(5).each_with_index do |item, i| %>
+                    <div class="list-item unpopular">
+                      <span class="item-rank"><%= i + 1 %>.</span>
+                      <span class="item-name"><%= item[:name] %></span>
+                      <span class="item-count"><%= item[:count] %></span>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="column">
+                  <% @least_popular_items[5..9].each_with_index do |item, i| %>
+                    <div class="list-item unpopular">
+                      <span class="item-rank"><%= i + 6 %>.</span>
+                      <span class="item-name"><%= item[:name] %></span>
+                      <span class="item-count"><%= item[:count] %></span>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Item Attachment Rate -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">Item Attachment Rate - Common Pairings</h3>
+            <p class="chart-subtitle">Cross-selling opportunities</p>
+          </div>
+          <div class="attachment-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Item A</th>
+                  <th>Item B</th>
+                  <th>Attachment Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @item_attachments.each do |pair| %>
+                  <tr>
+                    <td><%= pair[:item_a] %></td>
+                    <td><%= pair[:item_b] %></td>
+                    <td>
+                      <div class="rate-bar">
+                        <div class="rate-fill" style="width: <%= pair[:rate] %>%"></div>
+                        <span class="rate-text"><%= pair[:rate] %>%</span>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Product Performance -->
+        <div class="chart-card product-chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">Product Performance</h3>
+            <p class="chart-subtitle">Top products by sales</p>
+          </div>
+          <div class="chart-wrapper">
+            <div class="chart-with-axes">
+              <div class="y-axis">
+                <span class="y-label">30</span>
+                <span class="y-label">25</span>
+                <span class="y-label">20</span>
+                <span class="y-label">15</span>
+                <span class="y-label">10</span>
+                <span class="y-label">5</span>
+                <span class="y-label">0</span>
+              </div>
+              <div class="chart-area">
+                <div class="fake-chart bar-chart">
+                  <% @product_data.first(10).each do |product| %>
+                    <div class="bar-group">
+                      <div class="bar" style="height: <%= (product[:amount].to_f / 28 * 100).round %>%"></div>
+                      <div class="bar-label"><%= product[:name] %></div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <% elsif current_tab == 'timing' %>
+      <!-- TIMING & OPERATIONS TAB -->
+      <div class="tab-content active">
+        <div class="metrics-row-small">
+          <div class="metric-card-small">
+            <div class="metric-label">Avg Orders/Hour</div>
+            <div class="metric-value-large"><%= @average_orders_per_hour %></div>
+          </div>
+          <div class="metric-card-small">
+            <div class="metric-label">Time Between Orders</div>
+            <div class="metric-value-large"><%= @time_between_orders %> min</div>
+          </div>
+          <div class="metric-card-small">
+            <div class="metric-label">Avg Items/Order</div>
+            <div class="metric-value-large"><%= @average_items_per_order %></div>
+          </div>
+        </div>
+
+        <div class="charts-row-full">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Order Frequency by 15-Minute Intervals</h3>
+              <p class="chart-subtitle">Lunch rush (11 AM - 3 PM) - Identify peak times</p>
+            </div>
+            <div class="chart-wrapper-large">
+              <div class="chart-with-axes">
+                <div class="y-axis">
+                  <span class="y-label">25</span>
+                  <span class="y-label">20</span>
+                  <span class="y-label">15</span>
+                  <span class="y-label">10</span>
+                  <span class="y-label">5</span>
+                  <span class="y-label">0</span>
+                </div>
+                <div class="chart-area">
+                  <div class="fake-chart bar-chart">
+                    <% [15, 25, 35, 45, 60, 85, 100, 75, 65, 50, 35, 25, 20, 15, 10, 5].each_with_index do |height, i| %>
+                      <div class="bar-group">
+                        <div class="bar" style="height: <%= height %>%"></div>
+                        <div class="bar-label" style="font-size: 9px;"><%= ['11:00', '11:15', '11:30', '11:45', '12:00', '12:15', '12:30', '12:45', '1:00', '1:15', '1:30', '1:45', '2:00', '2:15', '2:30', '2:45'][i] %></div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Hourly Order Distribution</h3>
+            </div>
+            <div class="chart-wrapper">
+              <div class="chart-with-axes">
+                <div class="y-axis">
+                  <span class="y-label">25</span>
+                  <span class="y-label">20</span>
+                  <span class="y-label">15</span>
+                  <span class="y-label">10</span>
+                  <span class="y-label">5</span>
+                  <span class="y-label">0</span>
+                </div>
+                <div class="chart-area">
+                  <svg viewBox="0 0 400 200" class="hourly-dist-chart">
+                    <defs>
+                      <linearGradient id="hourlyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#001d06;stop-opacity:0.4" />
+                        <stop offset="100%" style="stop-color:#001d06;stop-opacity:0.05" />
+                      </linearGradient>
+                    </defs>
+                    <!-- Grid lines -->
+                    <line x1="0" y1="0" x2="400" y2="0" stroke="#334155" stroke-width="1" />
+                    <line x1="0" y1="40" x2="400" y2="40" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="80" x2="400" y2="80" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="160" x2="400" y2="160" stroke="#334155" stroke-width="1" stroke-dasharray="2,2" />
+                    <line x1="0" y1="200" x2="400" y2="200" stroke="#334155" stroke-width="1" />
+                    
+                    <polyline fill="url(#hourlyGradient)" stroke="none" points="0,190 30,180 60,170 90,145 120,190 150,185 180,130 210,95 240,105 270,135 300,165 330,180 360,185 400,190 400,200 0,200" />
+                    <polyline fill="none" stroke="#001d06" stroke-width="3" points="0,190 30,180 60,170 90,145 120,190 150,185 180,130 210,95 240,105 270,135 300,165 330,180 360,185 400,190" />
+                  </svg>
+                  <div class="x-axis">
+                    <span class="x-label">11 AM</span>
+                    <span class="x-label">2 PM</span>
+                    <span class="x-label">5 PM</span>
+                    <span class="x-label">8 PM</span>
+                    <span class="x-label">10 PM</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3 class="chart-title">Meal Period Breakdown</h3>
+            </div>
+            <div class="chart-wrapper">
+              <div class="fake-chart pie-chart">
+                <svg viewBox="0 0 200 200">
+                  <circle cx="100" cy="100" r="80" fill="#001d06" />
+                  <circle cx="100" cy="100" r="80" fill="#003d0d" stroke="#1e293b" stroke-width="2" stroke-dasharray="95 502" transform="rotate(-90 100 100)" />
+                  <circle cx="100" cy="100" r="80" fill="#10b981" stroke="#1e293b" stroke-width="2" stroke-dasharray="150 502" stroke-dashoffset="-95" transform="rotate(-90 100 100)" />
+                  <circle cx="100" cy="100" r="80" fill="#34d399" stroke="#1e293b" stroke-width="2" stroke-dasharray="228 502" stroke-dashoffset="-245" transform="rotate(-90 100 100)" />
+                </svg>
+                <div class="pie-legend">
+                  <div class="legend-item"><span class="legend-color" style="background:#001d06"></span> Breakfast</div>
+                  <div class="legend-item"><span class="legend-color" style="background:#003d0d"></span> Lunch</div>
+                  <div class="legend-item"><span class="legend-color" style="background:#10b981"></span> Dinner</div>
+                  <div class="legend-item"><span class="legend-color" style="background:#34d399"></span> Late Night</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+  document.getElementById('mainContent').classList.toggle('expanded');
+}
+</script>

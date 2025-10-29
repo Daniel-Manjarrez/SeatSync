@@ -1,5 +1,6 @@
 <h1>Receipt Dashboard</h1>
 
+<%= link_to '← Back to Dashboard', dashboard_path, class: 'btn btn-secondary' %>
 <%= link_to 'Upload New Receipt', new_receipt_path, class: 'btn btn-primary' %>
 
 <% if @receipts.any? %>

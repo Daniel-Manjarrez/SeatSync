@@ -1,0 +1,86 @@
+<div class="dashboard-container">
+  <!-- Sidebar Navigation -->
+  <div class="sidebar" id="sidebar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar" onclick="toggleSidebar()">
+      <svg class="toggle-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="18" height="18" x="3" y="3" rx="2"/>
+        <path d="M9 3v18"/>
+        <path d="m14 9 3 3-3 3"/>
+      </svg>
+    </button>
+    
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-icon">🍽️</div>
+        <span class="logo-text">SeatSync</span>
+      </div>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <%= link_to dashboard_path, class: 'nav-item' do %>
+        <span class="nav-content">
+          <span class="nav-text">Restaurant Analytics</span>
+        </span>
+        <div class="nav-marquee">
+          <div class="marquee-inner">
+            <span>Restaurant Analytics</span>
+            <span>Restaurant Analytics</span>
+            <span>Restaurant Analytics</span>
+            <span>Restaurant Analytics</span>
+          </div>
+        </div>
+      <% end %>
+      
+      <%= link_to new_receipt_path, class: 'nav-item' do %>
+        <span class="nav-content">
+          <span class="nav-text">Upload Images</span>
+        </span>
+        <div class="nav-marquee">
+          <div class="marquee-inner">
+            <span>Upload Images</span>
+            <span>Upload Images</span>
+            <span>Upload Images</span>
+            <span>Upload Images</span>
+          </div>
+        </div>
+      <% end %>
+      
+      <%= link_to ingredients_path, class: 'nav-item active' do %>
+        <span class="nav-content">
+          <span class="nav-text">Ingredients Dashboard</span>
+        </span>
+        <div class="nav-marquee">
+          <div class="marquee-inner">
+            <span>Ingredients Dashboard</span>
+            <span>Ingredients Dashboard</span>
+            <span>Ingredients Dashboard</span>
+            <span>Ingredients Dashboard</span>
+          </div>
+        </div>
+      <% end %>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" id="mainContent">
+    <div class="dashboard-header">
+      <div>
+        <h1 class="dashboard-title">Ingredients Dashboard</h1>
+        <p class="dashboard-subtitle">Coming soon</p>
+      </div>
+    </div>
+
+    <div class="empty-state">
+      <div class="empty-state-icon">🥗</div>
+      <h2 class="empty-state-title">Ingredients Dashboard</h2>
+      <p class="empty-state-description">This feature is currently under development and will be available soon.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+  document.getElementById('mainContent').classList.toggle('expanded');
+}
+</script>

@@ -21,6 +21,29 @@ SeatSync is a receipt tracking application that allows users to upload receipt i
 
 ---
 
+## Features
+
+### 🎯 Restaurant Analytics Dashboard
+- **Modern Dark Theme UI** - Sleek, professional dashboard with gradient backgrounds
+- **Real-time Metrics Display** - Key performance indicators at a glance
+- **Interactive Charts** - Powered by Chart.js for data visualization
+- **Responsive Design** - Works on desktop, tablet, and mobile devices
+- **Sidebar Navigation** - Easy access to all sections
+
+### 📊 Dashboard Metrics
+- Total Amount
+- Order Count
+- Average Costs
+- Profit Margin
+- Customer Engagement Score
+- Category Breakdown (Food, Dessert, Drink)
+- Product Sales Analysis
+
+### 📸 Receipt Tracking
+- Upload receipt images
+- OCR-powered data extraction
+- View receipt history
+
 ## Running the Application Locally
 
 ### Prerequisites
@@ -66,10 +89,14 @@ SeatSync is a receipt tracking application that allows users to upload receipt i
    http://localhost:3000
    ```
 
-   You should be automatically redirected to the receipts dashboard at:
+   You should be automatically redirected to the restaurant dashboard at:
    ```
-   http://localhost:3000/receipts
+   http://localhost:3000/dashboard
    ```
+   
+   **Main Features:**
+   - 📊 **Dashboard** - Modern analytics dashboard with charts and metrics
+   - 🧾 **Receipts** - Access via sidebar "Sales" or `/receipts`
 
 ### Using the Application
 
