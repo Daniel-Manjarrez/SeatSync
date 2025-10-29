@@ -65,7 +65,13 @@ SeatSync is a receipt tracking application that allows users to upload receipt i
    bundle install
    ```
 
-3. **Setup Database**
+3. **Install Tesseract OCR**
+   ```bash
+   sudo apt-get update
+   sudo apt-get install -y tesseract-ocr
+   ```
+
+4. **Setup Database**
    ```bash
    # Create the database
    rails db:create
@@ -77,12 +83,12 @@ SeatSync is a receipt tracking application that allows users to upload receipt i
    rails db:seed
    ```
 
-4. **Start the Rails Server**
+5. **Start the Rails Server**
    ```bash
    rails server
    ```
 
-5. **Access the Application**
+6. **Access the Application**
 
    Open your web browser and navigate to:
    ```
