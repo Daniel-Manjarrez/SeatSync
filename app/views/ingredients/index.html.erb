@@ -18,45 +18,18 @@
     
     <nav class="sidebar-nav">
       <%= link_to dashboard_path, class: 'nav-item' do %>
-        <span class="nav-content">
-          <span class="nav-text">Restaurant Analytics</span>
-        </span>
-        <div class="nav-marquee">
-          <div class="marquee-inner">
-            <span>Restaurant Analytics</span>
-            <span>Restaurant Analytics</span>
-            <span>Restaurant Analytics</span>
-            <span>Restaurant Analytics</span>
-          </div>
-        </div>
+        <span class="nav-content"><span class="nav-text">Restaurant Analytics</span></span>
+        <div class="nav-marquee"><div class="marquee-inner"><span>Restaurant Analytics</span><span>Restaurant Analytics</span></div></div>
       <% end %>
       
       <%= link_to new_receipt_path, class: 'nav-item' do %>
-        <span class="nav-content">
-          <span class="nav-text">Upload Images</span>
-        </span>
-        <div class="nav-marquee">
-          <div class="marquee-inner">
-            <span>Upload Images</span>
-            <span>Upload Images</span>
-            <span>Upload Images</span>
-            <span>Upload Images</span>
-          </div>
-        </div>
+        <span class="nav-content"><span class="nav-text">Upload Images</span></span>
+        <div class="nav-marquee"><div class="marquee-inner"><span>Upload Images</span><span>Upload Images</span></div></div>
       <% end %>
       
       <%= link_to ingredients_path, class: 'nav-item active' do %>
-        <span class="nav-content">
-          <span class="nav-text">Ingredients Dashboard</span>
-        </span>
-        <div class="nav-marquee">
-          <div class="marquee-inner">
-            <span>Ingredients Dashboard</span>
-            <span>Ingredients Dashboard</span>
-            <span>Ingredients Dashboard</span>
-            <span>Ingredients Dashboard</span>
-          </div>
-        </div>
+        <span class="nav-content"><span class="nav-text">Ingredients Dashboard</span></span>
+        <div class="nav-marquee"><div class="marquee-inner"><span>Ingredients Dashboard</span><span>Ingredients Dashboard</span></div></div>
       <% end %>
     </nav>
   </div>
@@ -66,14 +39,52 @@
     <div class="dashboard-header">
       <div>
         <h1 class="dashboard-title">Ingredients Dashboard</h1>
-        <p class="dashboard-subtitle">Coming soon</p>
+        <p class="dashboard-subtitle">Track and adjust inventory quantities for each recipe</p>
       </div>
     </div>
 
-    <div class="empty-state">
-      <div class="empty-state-icon">🥗</div>
-      <h2 class="empty-state-title">Ingredients Dashboard</h2>
-      <p class="empty-state-description">This feature is currently under development and will be available soon.</p>
+    <div class="metrics-row">
+      <% sample_recipes = [
+        { name: "Margherita Pizza", ingredients: ["Tomatoes", "Cheese", "Basil"] },
+        { name: "Caesar Salad", ingredients: ["Lettuce", "Croutons", "Parmesan"] },
+        { name: "Beef Tacos", ingredients: ["Tortilla", "Beef", "Cheese"] },
+        { name: "Pasta Alfredo", ingredients: ["Pasta", "Cream", "Parmesan"] }
+      ] %>
+
+      <% sample_recipes.each do |recipe| %>
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title"><%= recipe[:name] %></h3>
+            <p class="chart-subtitle">Adjust ingredient quantities</p>
+          </div>
+
+          <div class="ingredient-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ingredient</th>
+                  <th>Quantity</th>
+                  <th>Adjust</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% recipe[:ingredients].each do |ingredient| %>
+                  <tr>
+                    <td><%= ingredient %></td>
+                    <td id="<%= ingredient.parameterize %>-count">0</td>
+                    <td>
+                      <div class="adjust-buttons">
+                        <button class="adjust-btn minus" onclick="updateCount('<%= ingredient.parameterize %>', -1)">−</button>
+                        <button class="adjust-btn plus" onclick="updateCount('<%= ingredient.parameterize %>', 1)">+</button>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
@@ -83,4 +94,58 @@ function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('collapsed');
   document.getElementById('mainContent').classList.toggle('expanded');
 }
+
+function updateCount(id, delta) {
+  const countEl = document.getElementById(id + '-count');
+  let current = parseInt(countEl.textContent);
+  current = Math.max(0, current + delta); // prevent negative
+  countEl.textContent = current;
+}
 </script>
+
+<style>
+.ingredient-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ingredient-table th,
+.ingredient-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-secondary);
+}
+
+.ingredient-table th {
+  text-transform: uppercase;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.5px;
+}
+
+.adjust-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.adjust-btn {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-medium);
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 16px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.adjust-btn:hover {
+  background: var(--accent-primary);
+  color: var(--accent-lighter);
+}
+
+.adjust-btn.minus { color: #ef4444; }
+.adjust-btn.plus { color: #10b981; }
+</style>
