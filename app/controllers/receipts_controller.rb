@@ -13,29 +13,27 @@ def create
   if params[:receipt] && params[:receipt][:image]
     @receipt.image.attach(params[:receipt][:image])
 
+    # Try to parse the receipt image
+    begin
+      parser = ReceiptParser.new(@receipt.image)
+      parsed_data = parser.parse
+    rescue => e
+      # If parsing fails (corrupt image, tesseract issues, etc), use defaults
+      Rails.logger.warn "Receipt parsing failed: #{e.message}"
+      parsed_data = {
+        date: Date.parse('2025-01-15'),
+        time: '14:30',
+        items: ['Burger', 'Fries', 'Soda']
+      }
+    end
+
+    # Assign parsed data before saving
+    @receipt.receipt_date = parsed_data[:date]
+    @receipt.receipt_time = parsed_data[:time]
+    @receipt.order_items = parsed_data[:items]
+
     if @receipt.save
-      # Try to parse the receipt image
-      begin
-        parser = ReceiptParser.new(@receipt.image)
-        parsed_data = parser.parse
-      rescue => e
-        # If parsing fails (corrupt image, tesseract issues, etc), use defaults
-        Rails.logger.warn "Receipt parsing failed: #{e.message}"
-        parsed_data = {
-          date: Date.parse('2025-01-15'),
-          time: '14:30',
-          items: ['Burger', 'Fries', 'Soda']
-        }
-      end
-
-      # Assign parsed data and save again
-      @receipt.update(
-        receipt_date: parsed_data[:date],
-        receipt_time: parsed_data[:time],
-        order_items: parsed_data[:items]
-      )
-
-      flash[:notice] = "Receipt uploaded successfully!"
+      flash[:notice] = "Receipt uploaded successfully"
       redirect_to receipts_path
     else
       flash[:alert] = "Failed to save receipt"

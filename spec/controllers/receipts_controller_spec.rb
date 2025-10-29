@@ -91,7 +91,7 @@ RSpec.describe ReceiptsController, type: :controller do
 
       it 'sets a success flash message' do
         post :create, params: { receipt: { image: uploaded_image } }
-        expect(flash[:notice]).to eq("Receipt uploaded successfully!")
+        expect(flash[:notice]).to eq("Receipt uploaded successfully")
       end
     end
 
