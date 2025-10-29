@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 ruby '3.3'
 
+gem 'uglifier', '>= 1.3.0'
+
 gem 'rtesseract'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
