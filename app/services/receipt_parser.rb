@@ -31,10 +31,16 @@ class ReceiptParser
 
   def extract_date(text)
     # Common receipt date patterns
-    date_pattern = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4})\b/
+    date_pattern = /\b(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{4})\b/
     match = text.match(date_pattern)
-    match ? Date.parse(match[1]) : Date.today
-  end
+    if match
+      # Assume format is MM/DD/YYYY on receipt
+      month, day, year = match[1].split(/[\/\-\.]/).map(&:to_i)
+      Date.new(year, month, day)
+    else
+      Date.today
+    end
+  end  
 
   def extract_time(text)
     # Match HH:MM or HH:MM AM/PM
