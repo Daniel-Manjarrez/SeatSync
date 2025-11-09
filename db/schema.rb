@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_26_233428) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_08_193947) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -39,14 +39,50 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_26_233428) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "ingredients", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "unit", default: "lbs"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_ingredients_on_name", unique: true
+  end
+
+  create_table "items", force: :cascade do |t|
+    t.string "name", null: false
+    t.decimal "price", precision: 8, scale: 2, null: false
+    t.string "category"
+    t.text "recipes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_items_on_name", unique: true
+  end
+
+  create_table "receipt_items", force: :cascade do |t|
+    t.integer "receipt_id", null: false
+    t.integer "item_id", null: false
+    t.integer "quantity", default: 1, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_receipt_items_on_item_id"
+    t.index ["receipt_id", "item_id"], name: "index_receipt_items_on_receipt_id_and_item_id"
+    t.index ["receipt_id"], name: "index_receipt_items_on_receipt_id"
+  end
+
   create_table "receipts", force: :cascade do |t|
     t.date "receipt_date"
     t.string "receipt_time"
     t.text "order_items"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "table_size"
+    t.decimal "subtotal", precision: 8, scale: 2
+    t.decimal "total", precision: 8, scale: 2
+    t.decimal "tip", precision: 8, scale: 2
+    t.string "waiter_name"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "receipt_items", "items"
+  add_foreign_key "receipt_items", "receipts"
 end

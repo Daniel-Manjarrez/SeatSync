@@ -18,7 +18,15 @@
         <tr>
           <td><%= receipt.receipt_date %></td>
           <td><%= receipt.receipt_time %></td>
-          <td><%= receipt.order_items.join(', ') %></td>
+          <td>
+            <% if receipt.receipt_items.any? %>
+              <%= receipt.receipt_items.map { |ri| "#{ri.quantity}x #{ri.item.name}" }.join(', ') %>
+            <% elsif receipt.order_items.present? %>
+              <%= receipt.order_items.join(', ') %>
+            <% else %>
+              <em>No items</em>
+            <% end %>
+          </td>
           <td><%= link_to 'View', receipt_path(receipt) %></td>
         </tr>
       <% end %>

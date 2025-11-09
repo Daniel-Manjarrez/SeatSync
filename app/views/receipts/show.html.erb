@@ -11,14 +11,60 @@
   <dt>Time:</dt>
   <dd><%= @receipt.receipt_time %></dd>
 
-  <dt>Order Items:</dt>
-  <dd>
-    <ul>
-      <% @receipt.order_items.each do |item| %>
-        <li><%= item %></li>
-      <% end %>
-    </ul>
-  </dd>
+  <% if @receipt.receipt_items.any? %>
+    <dt>Order Items:</dt>
+    <dd>
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @receipt.receipt_items.each do |receipt_item| %>
+            <tr>
+              <td><%= receipt_item.item.name %></td>
+              <td><%= receipt_item.quantity %></td>
+              <td>$<%= number_with_precision(receipt_item.item.price, precision: 2) %></td>
+              <td>$<%= number_with_precision(receipt_item.item.price * receipt_item.quantity, precision: 2) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </dd>
+  <% elsif @receipt.order_items.present? %>
+    <dt>Order Items (Legacy):</dt>
+    <dd>
+      <ul>
+        <% @receipt.order_items.each do |item| %>
+          <li><%= item %></li>
+        <% end %>
+      </ul>
+    </dd>
+  <% end %>
+
+  <% if @receipt.subtotal %>
+    <dt>Subtotal:</dt>
+    <dd>$<%= number_with_precision(@receipt.subtotal, precision: 2) %></dd>
+  <% end %>
+
+  <% if @receipt.tip %>
+    <dt>Tip:</dt>
+    <dd>$<%= number_with_precision(@receipt.tip, precision: 2) %></dd>
+  <% end %>
+
+  <% if @receipt.total %>
+    <dt>Total:</dt>
+    <dd>$<%= number_with_precision(@receipt.total, precision: 2) %></dd>
+  <% end %>
+
+  <% if @receipt.table_size %>
+    <dt>Table Size:</dt>
+    <dd><%= @receipt.table_size %> guests</dd>
+  <% end %>
 </dl>
 
-<%= link_to 'Back to Dashboard', receipts_path %>
+<%= link_to 'Back to Receipts', receipts_path %>

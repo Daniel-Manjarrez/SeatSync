@@ -71,3 +71,4 @@ yarn-debug.log*
 
 # Ignore ruby version files
 .ruby-version
+.DS_Store

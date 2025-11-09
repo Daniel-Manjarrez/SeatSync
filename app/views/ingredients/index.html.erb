@@ -39,53 +39,94 @@
     <div class="dashboard-header">
       <div>
         <h1 class="dashboard-title">Ingredients Dashboard</h1>
-        <p class="dashboard-subtitle">Track and adjust inventory quantities for each recipe</p>
+        <p class="dashboard-subtitle">Track ingredient usage across all menu items</p>
       </div>
     </div>
 
-    <div class="metrics-row">
-      <% sample_recipes = [
-        { name: "Margherita Pizza", ingredients: ["Tomatoes", "Cheese", "Basil"] },
-        { name: "Caesar Salad", ingredients: ["Lettuce", "Croutons", "Parmesan"] },
-        { name: "Beef Tacos", ingredients: ["Tortilla", "Beef", "Cheese"] },
-        { name: "Pasta Alfredo", ingredients: ["Pasta", "Cream", "Parmesan"] }
-      ] %>
-
-      <% sample_recipes.each do |recipe| %>
-        <div class="chart-card">
-          <div class="chart-header">
-            <h3 class="chart-title"><%= recipe[:name] %></h3>
-            <p class="chart-subtitle">Adjust ingredient quantities</p>
-          </div>
-
-          <div class="ingredient-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Ingredient</th>
-                  <th>Quantity</th>
-                  <th>Adjust</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% recipe[:ingredients].each do |ingredient| %>
-                  <tr>
-                    <td><%= ingredient %></td>
-                    <td id="<%= ingredient.parameterize %>-count">0</td>
-                    <td>
-                      <div class="adjust-buttons">
-                        <button class="adjust-btn minus" onclick="updateCount('<%= ingredient.parameterize %>', -1)">−</button>
-                        <button class="adjust-btn plus" onclick="updateCount('<%= ingredient.parameterize %>', 1)">+</button>
-                      </div>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
+    <% if @ingredient_usage.any? %>
+      <div class="chart-card" style="margin-bottom: 2rem;">
+        <div class="chart-header">
+          <h3 class="chart-title">Ingredient Usage This Month</h3>
+          <p class="chart-subtitle">Total consumption from <%= Date.today.beginning_of_month.strftime('%B %d') %> - <%= Date.today.strftime('%B %d, %Y') %></p>
         </div>
-      <% end %>
-    </div>
+
+        <div class="ingredient-table" style="padding: 1.5rem;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="border-bottom: 2px solid #334155;">
+                <th style="padding: 12px; text-align: left; color: #94a3b8; font-size: 12px; text-transform: uppercase;">Ingredient</th>
+                <th style="padding: 12px; text-align: right; color: #94a3b8; font-size: 12px; text-transform: uppercase;">Unit</th>
+                <th style="padding: 12px; text-align: right; color: #94a3b8; font-size: 12px; text-transform: uppercase;">This Month</th>
+                <th style="padding: 12px; text-align: right; color: #94a3b8; font-size: 12px; text-transform: uppercase;">Last Month</th>
+                <th style="padding: 12px; text-align: right; color: #94a3b8; font-size: 12px; text-transform: uppercase;">Change</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @ingredient_usage.sort_by { |_, amount| -amount }.each do |ingredient_name, amount| %>
+                <% ingredient = Ingredient.find_by(name: ingredient_name) %>
+                <% last_month_amount = @last_month_usage[ingredient_name] || 0 %>
+                <% change_percent = last_month_amount > 0 ? ((amount - last_month_amount) / last_month_amount * 100).round(1) : 0 %>
+                <tr style="border-bottom: 1px solid #1e293b;">
+                  <td style="padding: 16px; color: #e2e8f0; font-weight: 500;"><%= ingredient_name %></td>
+                  <td style="padding: 16px; text-align: right; color: #94a3b8;"><%= ingredient&.unit || 'lbs' %></td>
+                  <td style="padding: 16px; text-align: right; color: #10b981; font-weight: 600;"><%= number_with_precision(amount, precision: 2) %></td>
+                  <td style="padding: 16px; text-align: right; color: #64748b;"><%= number_with_precision(last_month_amount, precision: 2) %></td>
+                  <td style="padding: 16px; text-align: right;">
+                    <% if change_percent > 0 %>
+                      <span style="color: #10b981;">+<%= change_percent %>%</span>
+                    <% elsif change_percent < 0 %>
+                      <span style="color: #ef4444;"><%= change_percent %>%</span>
+                    <% else %>
+                      <span style="color: #64748b;">-</span>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="metrics-row" style="gap: 1.5rem;">
+        <div class="metric-card">
+          <div class="metric-content">
+            <div class="metric-label">Total Ingredients</div>
+            <div class="metric-value-container">
+              <span class="metric-value"><%= @ingredients.count %></span>
+              <span class="metric-unit">types</span>
+            </div>
+          </div>
+          <div class="metric-icon accent-emerald">📦</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-content">
+            <div class="metric-label">Top Ingredient</div>
+            <div class="metric-value-container">
+              <span class="metric-value" style="font-size: 1.25rem;"><%= @ingredient_usage.max_by { |_, v| v }&.first || 'N/A' %></span>
+            </div>
+          </div>
+          <div class="metric-icon accent-emerald">🥇</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-content">
+            <div class="metric-label">Receipts This Month</div>
+            <div class="metric-value-container">
+              <span class="metric-value"><%= Receipt.where(receipt_date: Date.today.beginning_of_month..Date.today).count %></span>
+              <span class="metric-unit">orders</span>
+            </div>
+          </div>
+          <div class="metric-icon accent-emerald">🧾</div>
+        </div>
+      </div>
+    <% else %>
+      <div class="chart-card" style="text-align: center; padding: 4rem 2rem;">
+        <h3 style="color: #e2e8f0; font-size: 1.5rem; margin-bottom: 1rem;">No Data Available</h3>
+        <p style="color: #94a3b8; margin-bottom: 2rem;">Upload receipts to start tracking ingredient usage</p>
+        <%= link_to 'Upload Receipt', new_receipt_path, class: 'btn btn-primary', style: 'display: inline-block; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;' %>
+      </div>
+    <% end %>
   </div>
 </div>
 
@@ -94,58 +135,4 @@ function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('collapsed');
   document.getElementById('mainContent').classList.toggle('expanded');
 }
-
-function updateCount(id, delta) {
-  const countEl = document.getElementById(id + '-count');
-  let current = parseInt(countEl.textContent);
-  current = Math.max(0, current + delta); // prevent negative
-  countEl.textContent = current;
-}
 </script>
-
-<style>
-.ingredient-table table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.ingredient-table th,
-.ingredient-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid var(--border-light);
-  color: var(--text-secondary);
-}
-
-.ingredient-table th {
-  text-transform: uppercase;
-  font-size: 12px;
-  color: var(--text-tertiary);
-  letter-spacing: 0.5px;
-}
-
-.adjust-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.adjust-btn {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-medium);
-  color: var(--text-primary);
-  font-weight: 700;
-  font-size: 16px;
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.adjust-btn:hover {
-  background: var(--accent-primary);
-  color: var(--accent-lighter);
-}
-
-.adjust-btn.minus { color: #ef4444; }
-.adjust-btn.plus { color: #10b981; }
-</style>

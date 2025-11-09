@@ -86,16 +86,27 @@
       </div>
     </div>
 
-    <!-- Tab Navigation -->
-    <div class="tab-navigation">
-      <%= link_to 'Overview', dashboard_path(tab: 'overview'), class: "tab-btn #{current_tab == 'overview' ? 'active' : ''}" %>
-      <%= link_to 'Revenue Analysis', dashboard_path(tab: 'revenue'), class: "tab-btn #{current_tab == 'revenue' ? 'active' : ''}" %>
-      <%= link_to 'Menu Performance', dashboard_path(tab: 'menu'), class: "tab-btn #{current_tab == 'menu' ? 'active' : ''}" %>
-      <%= link_to 'Timing & Operations', dashboard_path(tab: 'timing'), class: "tab-btn #{current_tab == 'timing' ? 'active' : ''}" %>
-    </div>
+    <% if @total_orders == 0 %>
+      <!-- Empty State -->
+      <div class="empty-state" style="text-align: center; padding: 60px 20px; background: white; border-radius: 12px; margin: 20px 0;">
+        <div style="font-size: 64px; margin-bottom: 20px;">📊</div>
+        <h2 style="color: #1a1a1a; margin-bottom: 12px;">No Receipt Data Yet</h2>
+        <p style="color: #6b7280; margin-bottom: 24px; font-size: 16px;">
+          Upload your first receipt to start seeing analytics and insights!
+        </p>
+        <%= link_to 'Upload Receipt', new_receipt_path, class: 'btn btn-primary', style: 'display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;' %>
+      </div>
+    <% else %>
+      <!-- Tab Navigation -->
+      <div class="tab-navigation">
+        <%= link_to 'Overview', dashboard_path(tab: 'overview'), class: "tab-btn #{current_tab == 'overview' ? 'active' : ''}" %>
+        <%= link_to 'Revenue Analysis', dashboard_path(tab: 'revenue'), class: "tab-btn #{current_tab == 'revenue' ? 'active' : ''}" %>
+        <%= link_to 'Menu Performance', dashboard_path(tab: 'menu'), class: "tab-btn #{current_tab == 'menu' ? 'active' : ''}" %>
+        <%= link_to 'Timing & Operations', dashboard_path(tab: 'timing'), class: "tab-btn #{current_tab == 'timing' ? 'active' : ''}" %>
+      </div>
 
-    <!-- Tab Content -->
-    <% if current_tab == 'overview' %>
+      <!-- Tab Content -->
+      <% if current_tab == 'overview' %>
       <!-- OVERVIEW TAB -->
       <div class="tab-content active">
         <!-- Top Metrics Cards -->
@@ -532,7 +543,7 @@
                   <% end %>
                 </div>
                 <div class="column">
-                  <% @most_popular_items[5..9].each_with_index do |item, i| %>
+                  <% (@most_popular_items[5..9] || []).each_with_index do |item, i| %>
                     <div class="list-item">
                       <span class="item-rank"><%= i + 6 %>.</span>
                       <span class="item-name"><%= item[:name] %></span>
@@ -561,7 +572,7 @@
                   <% end %>
                 </div>
                 <div class="column">
-                  <% @least_popular_items[5..9].each_with_index do |item, i| %>
+                  <% (@least_popular_items[5..9] || []).each_with_index do |item, i| %>
                     <div class="list-item unpopular">
                       <span class="item-rank"><%= i + 6 %>.</span>
                       <span class="item-name"><%= item[:name] %></span>
@@ -758,6 +769,7 @@
         </div>
       </div>
     <% end %>
+    <% end %> <!-- End of @total_orders check -->
   </div>
 </div>
 

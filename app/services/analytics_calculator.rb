@@ -26,7 +26,7 @@ class AnalyticsCalculator
   
   def average_order_size
     return 0 if @receipts.empty?
-    total_items = @receipts.sum { |r| r.order_items.count }
+    total_items = @receipts.sum { |r| r.receipt_items.sum(:quantity) }
     (total_items.to_f / @receipts.count).round(2)
   end
   
@@ -109,17 +109,14 @@ class AnalyticsCalculator
     end.to_h
   end
   
-  def revenue_by_category(item_categories = {})
-    # item_categories: Hash of item_name => category
-    # Example: {"Caesar Salad" => "Appetizers", "Burger" => "Entrees"}
-    
+  def revenue_by_category
     category_revenue = Hash.new(0)
     
     @receipts.each do |receipt|
-      receipt.order_items.each do |item|
-        category = item_categories[item] || "Other"
-        price = @menu_prices[item] || 0
-        category_revenue[category] += price
+      receipt.receipt_items.includes(:item).each do |receipt_item|
+        category = receipt_item.item.category || "Other"
+        revenue = receipt_item.item.price * receipt_item.quantity
+        category_revenue[category] += revenue
       end
     end
     
@@ -197,8 +194,8 @@ class AnalyticsCalculator
     item_counts = Hash.new(0)
     
     @receipts.each do |receipt|
-      receipt.order_items.each do |item|
-        item_counts[item] += 1
+      receipt.receipt_items.includes(:item).each do |receipt_item|
+        item_counts[receipt_item.item.name] += receipt_item.quantity
       end
     end
     
@@ -212,8 +209,8 @@ class AnalyticsCalculator
     item_counts = Hash.new(0)
     
     @receipts.each do |receipt|
-      receipt.order_items.each do |item|
-        item_counts[item] += 1
+      receipt.receipt_items.includes(:item).each do |receipt_item|
+        item_counts[receipt_item.item.name] += receipt_item.quantity
       end
     end
     
@@ -228,8 +225,13 @@ class AnalyticsCalculator
     # Example: [["Burger", "Fries"], ["Pizza", "Soda"]]
     
     item_pairs.map do |item_a, item_b|
-      item_a_receipts = @receipts.select { |r| r.order_items.include?(item_a) }
-      both_items = item_a_receipts.select { |r| r.order_items.include?(item_b) }
+      item_a_receipts = @receipts.select do |r|
+        r.receipt_items.joins(:item).where(items: { name: item_a }).exists?
+      end
+      
+      both_items = item_a_receipts.select do |r|
+        r.receipt_items.joins(:item).where(items: { name: item_b }).exists?
+      end
       
       rate = item_a_receipts.empty? ? 0 : ((both_items.count.to_f / item_a_receipts.count) * 100).round(0)
       
@@ -241,9 +243,9 @@ class AnalyticsCalculator
     item_revenue = Hash.new(0)
     
     @receipts.each do |receipt|
-      receipt.order_items.each do |item|
-        price = @menu_prices[item] || 0
-        item_revenue[item] += price
+      receipt.receipt_items.includes(:item).each do |receipt_item|
+        revenue = receipt_item.item.price * receipt_item.quantity
+        item_revenue[receipt_item.item.name] += revenue
       end
     end
     
@@ -353,7 +355,13 @@ class AnalyticsCalculator
   end
   
   def calculate_receipt_total(receipt)
-    receipt.order_items.sum { |item| @menu_prices[item] || 0 }
+    # Use the actual total from receipt if available, otherwise calculate
+    return receipt.total if receipt.total.present? && receipt.total > 0
+    
+    # Calculate from receipt items
+    receipt.receipt_items.includes(:item).sum do |receipt_item|
+      receipt_item.item.price * receipt_item.quantity
+    end
   end
   
   def parse_hour(time_string)
