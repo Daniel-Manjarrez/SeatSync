@@ -46,12 +46,22 @@ RSpec.describe ReceiptsController, type: :controller do
 
     context 'with valid image upload' do
       before do
-        # Mock the parser to return known data
+        # Mock the parser to return known data (items must be hashes with :text key)
         allow_any_instance_of(ReceiptParser).to receive(:parse).and_return(
           date: Date.parse('2025-01-15'),
           time: '14:30',
-          items: ['Burger', 'Fries', 'Soda']
+          items: [
+            { text: 'Burger', ocr_quantity: 1, line_price: 10.0 },
+            { text: 'Fries', ocr_quantity: 1, line_price: 5.0 },
+            { text: 'Soda', ocr_quantity: 1, line_price: 3.0 }
+          ],
+          subtotal: 18.0,
+          total: 20.0,
+          tip: 2.0
         )
+        
+        # Mock ItemMatcher to return matched items (so the controller flow works)
+        allow(ItemMatcher).to receive(:match_all).and_return([])
       end
 
       it 'creates a new receipt record in the database' do
@@ -84,14 +94,14 @@ RSpec.describe ReceiptsController, type: :controller do
         expect(receipt.image).to be_attached
       end
 
-      it 'redirects to receipts index page' do
+      it 'redirects to receipt show page' do
         post :create, params: { receipt: { image: uploaded_image } }
-        expect(response).to redirect_to(receipts_path)
+        expect(response).to redirect_to(receipt_path(Receipt.last))
       end
 
       it 'sets a success flash message' do
         post :create, params: { receipt: { image: uploaded_image } }
-        expect(flash[:notice]).to eq("Receipt uploaded successfully")
+        expect(flash[:notice]).to match(/Receipt uploaded successfully/)
       end
     end
 

@@ -24,7 +24,8 @@ class Receipt < ApplicationRecord
 
     self.receipt_date = data[:date]
     self.receipt_time = data[:time]
-    self.order_items  = data[:items]
+    # Extract text from items (items are hashes with :text key)
+    self.order_items  = data[:items].is_a?(Array) ? data[:items].map { |i| i.is_a?(Hash) ? i[:text] : i } : data[:items]
 
     data
   end

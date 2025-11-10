@@ -95,8 +95,10 @@ class ReceiptParser
       # Match pattern: [quantity] [item name...] [price]
       # Example: "4 Chicken Parm 18.00" or "1 Pizza 12"
       if line.match?(/^(\d+)\s+([A-Za-z])/i)
-        # Capture quantity, item name, and price
-        match = line.match(/^(\d+)\s+([A-Za-z][A-Za-z\s]+?)(?:\s+)?(\d+\.?\d{0,2})?\s*$/i)
+        # Capture quantity, item name (letters/spaces only), and price
+        match = line.match(/^(\d+)\s+([A-Za-z][A-Za-z\s]*?)\s+(\d+\.?\d{0,2})\s*$/i)
+        # Try without price if no match
+        match ||= line.match(/^(\d+)\s+([A-Za-z][A-Za-z\s]*)\s*$/i)
         next unless match
         
         ocr_quantity = match[1].to_i
