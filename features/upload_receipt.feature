@@ -9,7 +9,7 @@ Scenario: Successfully upload a receipt and view it on dashboard
   When I attach a receipt image
   And I press "Upload Photo"
   Then I should see "Receipt uploaded successfully"
-  And I should be on the receipts page
+  And I should see "Receipt Details"
   And I should see "2025-01-15"
   And I should see "14:30"
   And I should see "Burger"
