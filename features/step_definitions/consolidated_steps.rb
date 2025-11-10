@@ -2,13 +2,39 @@
 
 Given('the following test receipts exist:') do |table|
   Receipt.destroy_all
+
+  # Create test items if they don't exist
+  test_items = {
+    'Coffee' => { price: 3.99, category: 'Beverages' },
+    'Croissant' => { price: 4.99, category: 'Desserts' },
+    'Burger' => { price: 14.99, category: 'Entrees' },
+    'Fries' => { price: 3.99, category: 'Sides' },
+    'Soda' => { price: 2.99, category: 'Beverages' },
+    'Pizza' => { price: 16.99, category: 'Entrees' },
+    'Steak' => { price: 29.99, category: 'Entrees' },
+    'Salad' => { price: 9.99, category: 'Appetizers' }
+  }
+
+  test_items.each do |name, attrs|
+    Item.find_or_create_by!(name: name) do |item|
+      item.price = attrs[:price]
+      item.category = attrs[:category]
+    end
+  end
+
   table.hashes.each do |row|
-    items = row['items'].split(',')
-    Receipt.create!(
+    item_names = row['items'].split(',').map(&:strip)
+    receipt = Receipt.create!(
       receipt_date: Date.parse(row['date']),
       receipt_time: row['time'],
-      order_items: items
+      order_items: item_names
     )
+
+    # Create receipt_items for each item
+    item_names.each do |item_name|
+      item = Item.find_by(name: item_name)
+      receipt.receipt_items.create!(item: item, quantity: 1) if item
+    end
   end
 end
 
@@ -31,12 +57,7 @@ When('I run all analytics calculations') do
   @monthly_rev = @calculator.monthly_revenue(12)
   @rev_by_day = @calculator.revenue_by_day_of_week
   @rev_by_period = @calculator.revenue_by_meal_period
-  @rev_by_cat = @calculator.revenue_by_category({
-    'Burger' => 'Entrees', 'Pizza' => 'Entrees', 'Steak' => 'Entrees',
-    'Fries' => 'Sides', 'Salad' => 'Sides',
-    'Coffee' => 'Beverages', 'Soda' => 'Beverages',
-    'Croissant' => 'Desserts'
-  })
+  @rev_by_cat = @calculator.revenue_by_category
   @avg_check = @calculator.average_check_by_time_of_day
   @popular = @calculator.most_popular_items(10)
   @unpopular = @calculator.least_popular_items(10)

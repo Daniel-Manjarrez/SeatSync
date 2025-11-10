@@ -8,6 +8,10 @@ Scenario: Access dashboard from home
   Then I should be on the dashboard page
 
 Scenario: View dashboard with all tabs
+  Given the following test receipts exist:
+    | date       | time  | items                   |
+    | 2024-12-01 | 08:00 | Coffee,Croissant       |
+    | 2024-12-15 | 12:00 | Burger,Fries,Soda      |
   Given I am on the dashboard page
   Then I should see "Overview"
   When I follow "Revenue Analysis"

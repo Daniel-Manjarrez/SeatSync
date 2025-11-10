@@ -5,6 +5,7 @@ Feature: Upload and view receipt
 
 Scenario: Successfully upload a receipt and view it on dashboard
   Given I am on the upload receipt page
+  And the receipt parser will return test data
   When I attach a receipt image
   And I press "Upload Photo"
   Then I should see "Receipt uploaded successfully"

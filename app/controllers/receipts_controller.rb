@@ -45,7 +45,7 @@ def create
       end
 
       flash[:notice] = "Receipt uploaded successfully! Matched #{matched_items.length} items."
-      redirect_to @receipt
+      redirect_to receipts_path
     else
       flash[:alert] = "Failed to save receipt: #{@receipt.errors.full_messages.join(', ')}"
       render :new
