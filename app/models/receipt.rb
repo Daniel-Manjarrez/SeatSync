@@ -39,9 +39,15 @@ class Receipt < ApplicationRecord
       
       # Parse recipes JSON and sum up ingredients
       next unless item.recipes.is_a?(Hash)
-      
+
       item.recipes.each do |ingredient_name, amount_per_serving|
-        ingredient_usage[ingredient_name] += amount_per_serving * quantity_ordered
+        next if ingredient_name.blank?
+
+        # Normalize ingredient name by matching existing Ingredient (case-insensitive)
+        ing = Ingredient.where('lower(name) = ?', ingredient_name.to_s.downcase).first
+        key = ing ? ing.name : ingredient_name.to_s.split.map(&:capitalize).join(' ')
+
+        ingredient_usage[key] += amount_per_serving * quantity_ordered
       end
     end
     
@@ -58,7 +64,16 @@ class Receipt < ApplicationRecord
       end
     end
     
-    usage
+    # Ensure keys are normalized to existing Ingredient names where possible
+    normalized = {}
+    usage.each do |name, amt|
+      ing = Ingredient.where('lower(name) = ?', name.to_s.downcase).first
+      key = ing ? ing.name : name
+      normalized[key] ||= 0
+      normalized[key] += amt
+    end
+
+    normalized
   end
 end
 

@@ -1,12 +1,66 @@
-<h1>Upload Receipt</h1>
+<div class="dashboard-container">
+  <div class="sidebar" id="sidebar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar" onclick="toggleSidebar()">
+      <svg class="toggle-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="18" height="18" x="3" y="3" rx="2"/>
+        <path d="M9 3v18"/>
+        <path d="m14 9 3 3-3 3"/>
+      </svg>
+    </button>
 
-<%= form_with(model: @receipt, url: receipts_path, local: true) do |form| %>
-  <div class="form-group">
-    <%= form.label :image, "Receipt Image" %>
-    <%= form.file_field :image, accept: 'image/*', required: true, id: 'receipt_image' %>
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-icon">🍽️</div>
+        <span class="logo-text">SeatSync</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <%= link_to dashboard_path, class: 'nav-item' do %>
+        <span class="nav-content"><span class="nav-text">Restaurant Analytics</span></span>
+        <div class="nav-marquee"><div class="marquee-inner"><span>Restaurant Analytics</span><span>Restaurant Analytics</span></div></div>
+      <% end %>
+      
+      <%= link_to new_receipt_path, class: 'nav-item active' do %>
+        <span class="nav-content"><span class="nav-text">Upload Images</span></span>
+        <div class="nav-marquee"><div class="marquee-inner"><span>Upload Images</span><span>Upload Images</span></div></div>
+      <% end %>
+      
+      <%= link_to ingredients_path, class: 'nav-item' do %>
+        <span class="nav-content"><span class="nav-text">Ingredients Dashboard</span></span>
+        <div class="nav-marquee"><div class="marquee-inner"><span>Ingredients Dashboard</span><span>Ingredients Dashboard</span></div></div>
+      <% end %>
+    </nav>
   </div>
 
-  <%= form.submit "Upload Photo", class: 'btn btn-primary' %>
-<% end %>
+  <div class="main-content" id="mainContent">
+    <div class="dashboard-header">
+      <div>
+        <h1 class="dashboard-title">Upload Receipt</h1>
+        <p class="dashboard-subtitle">Add receipt photos to extract menu items and update analytics</p>
+      </div>
+    </div>
 
-<%= link_to 'Back to Dashboard', receipts_path %>
+    <div class="chart-card" style="padding:1.25rem; margin-top:1rem;">
+      <%= form_with(model: @receipt, url: receipts_path, local: true) do |form| %>
+        <div class="form-group" style="margin-bottom:1rem;">
+          <%= form.label :image, "Receipt Image", style: 'display:block; color:#94a3b8; margin-bottom:0.5rem;' %>
+          <%= form.file_field :image, accept: 'image/*', required: true, id: 'receipt_image', style: 'background:#071024; color:#e2e8f0; padding:0.5rem; border-radius:6px; border:1px solid #1f2a44;' %>
+        </div>
+
+        <%= form.submit "Upload Photo", class: 'btn btn-primary', style: 'background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding:0.5rem 0.9rem; border-radius:8px; border:none;' %>
+      <% end %>
+
+      <div style="margin-top:1rem;">
+        <%= link_to 'Back to Dashboard', dashboard_path, style: 'color:#94a3b8;' %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+  document.getElementById('mainContent').classList.toggle('expanded');
+}
+</script>
