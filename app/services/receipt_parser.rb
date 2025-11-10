@@ -92,25 +92,26 @@ class ReceiptParser
     items = []
     
     lines.each do |line|
-      # Match pattern: [quantity] [item name...]
-      # Be greedy to capture full names like "Rigatoni with Vodka Sauce"
+      # Match pattern: [quantity] [item name...] [price]
+      # Example: "4 Chicken Parm 18.00" or "1 Pizza 12"
       if line.match?(/^(\d+)\s+([A-Za-z])/i)
-        # Capture quantity and item name (letters and spaces)
-        # Stop before digits (prices) or at end of useful text
-        match = line.match(/^(\d+)\s+([A-Za-z][A-Za-z\s]+)/i)
+        # Capture quantity, item name, and price
+        match = line.match(/^(\d+)\s+([A-Za-z][A-Za-z\s]+?)(?:\s+)?(\d+\.?\d{0,2})?\s*$/i)
         next unless match
         
-        quantity = match[1].to_i
+        ocr_quantity = match[1].to_i
         item_name = match[2].strip
-        
-        # Remove trailing numbers that might be prices
-        item_name = item_name.sub(/\s+\d+$/, '').strip
+        line_price = match[3]&.to_f  # The price shown on this line (may be nil)
         
         # Filter out non-food lines
         next if item_name.match?(/^(subtotal|tax|total|cash|change|visa|card|check|order|phone|us-|ng\s)/i)
         next if item_name.length < 3
         
-        items << { text: item_name, quantity: quantity }
+        items << { 
+          text: item_name, 
+          ocr_quantity: ocr_quantity,
+          line_price: line_price  # Store for validation
+        }
       end
     end
     

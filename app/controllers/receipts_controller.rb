@@ -21,8 +21,8 @@ def create
       parser = ReceiptParser.new(@receipt.image)
       parsed_data = parser.parse
 
-      # Match OCR items to menu items
-      matched_items = ItemMatcher.match_all(parsed_data[:items])
+      # Match OCR items to menu items with subtotal validation
+      matched_items = ItemMatcher.match_all(parsed_data[:items], subtotal: parsed_data[:subtotal])
 
       # Update receipt with parsed data and create receipt items in a transaction
       Receipt.transaction do
