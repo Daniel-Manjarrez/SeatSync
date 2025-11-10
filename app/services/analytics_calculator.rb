@@ -302,19 +302,19 @@ class AnalyticsCalculator
   
   def time_between_orders
     return 0 if @receipts.count < 2
-    
+
     sorted = @receipts.sort_by { |r| DateTime.parse("#{r.receipt_date} #{r.receipt_time}") }
     time_diffs = []
-    
+
     sorted.each_cons(2) do |receipt1, receipt2|
       time1 = DateTime.parse("#{receipt1.receipt_date} #{receipt1.receipt_time}")
       time2 = DateTime.parse("#{receipt2.receipt_date} #{receipt2.receipt_time}")
-      diff_minutes = ((time2 - time1) * 24 * 60).round(2)
+      diff_minutes = ((time2 - time1) * 24 * 60).to_f
       time_diffs << diff_minutes if diff_minutes > 0
     end
-    
+
     return 0 if time_diffs.empty?
-    (time_diffs.sum / time_diffs.count).round(2)
+    (time_diffs.sum / time_diffs.count.to_f).round(2)
   end
   
   # ============================================

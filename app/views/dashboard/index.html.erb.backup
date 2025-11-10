@@ -1,0 +1,104 @@
+<%
+  # Tab selection logic
+  current_tab = params[:tab] || 'overview'
+%>
+
+<div class="dashboard-container">
+  <!-- Sidebar Navigation -->
+  <div class="sidebar" id="sidebar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar" onclick="toggleSidebar()">
+      <svg class="toggle-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="18" height="18" x="3" y="3" rx="2"/>
+        <path d="M9 3v18"/>
+        <path d="m14 9 3 3-3 3"/>
+      </svg>
+    </button>
+
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <div class="logo-icon">🍽️</div>
+        <span class="logo-text">SeatSync</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <%= link_to dashboard_path, class: 'nav-item active' do %>
+        <span class="nav-content">
+          <span class="nav-text">Restaurant Analytics</span>
+        </span>
+        <div class="nav-marquee">
+          <div class="marquee-inner">
+            <span>Restaurant Analytics</span>
+            <span>Restaurant Analytics</span>
+            <span>Restaurant Analytics</span>
+            <span>Restaurant Analytics</span>
+          </div>
+        </div>
+      <% end %>
+
+      <%= link_to new_receipt_path, class: 'nav-item' do %>
+        <span class="nav-content">
+          <span class="nav-text">Upload Images</span>
+        </span>
+        <div class="nav-marquee">
+          <div class="marquee-inner">
+            <span>Upload Images</span>
+            <span>Upload Images</span>
+            <span>Upload Images</span>
+            <span>Upload Images</span>
+          </div>
+        </div>
+      <% end %>
+
+      <%= link_to ingredients_path, class: 'nav-item' do %>
+        <span class="nav-content">
+          <span class="nav-text">Ingredients Dashboard</span>
+        </span>
+        <div class="nav-marquee">
+          <div class="marquee-inner">
+            <span>Ingredients Dashboard</span>
+            <span>Ingredients Dashboard</span>
+            <span>Ingredients Dashboard</span>
+            <span>Ingredients Dashboard</span>
+          </div>
+        </div>
+      <% end %>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" id="mainContent">
+    <!-- Header with Growth Metrics -->
+    <div class="dashboard-header">
+      <div>
+        <h1 class="dashboard-title">Restaurant Analytics</h1>
+        <p class="dashboard-subtitle">Real-time performance metrics and insights</p>
+      </div>
+      <div class="growth-badges">
+        <div class="growth-badge positive">
+          <span class="growth-label">WoW</span>
+          <span class="growth-value">+<%= @week_over_week_growth %>%</span>
+        </div>
+        <div class="growth-badge positive">
+          <span class="growth-label">MoM</span>
+          <span class="growth-value">+<%= @month_over_month_growth %>%</span>
+        </div>
+      </div>
+    </div>
+
+    <% if @total_orders == 0 %>
+      <!-- Empty State -->
+      <div class="empty-state" style="text-align: center; padding: 60px 20px; background: white; border-radius: 12px; margin: 20px 0;">
+        <div style="font-size: 64px; margin-bottom: 20px;">📊</div>
+        <h2 style="color: #1a1a1a; margin-bottom: 12px;">No Receipt Data Yet</h2>
+        <p style="color: #6b7280; margin-bottom: 24px; font-size: 16px;">
+          Upload your first receipt to start seeing analytics and insights!
+        </p>
+        <%= link_to 'Upload Receipt', new_receipt_path, class: 'btn btn-primary', style: 'display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;' %>
+      </div>
+    <% else %>
+      <!-- ORIGINAL HARDCODED VERSION WITH FAKE DATA -->
+      <p>This is the backup of the original static dashboard view.</p>
+    <% end %>
+  </div>
+</div>

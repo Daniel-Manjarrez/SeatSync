@@ -27,7 +27,8 @@ SeatSync::Application.configure do
   # config.assets.compress = false
 
   # Expands the lines which load the assets
-  config.assets.debug = true
+  # Disabled for better performance - combine assets
+  config.assets.debug = false
 
   # Store uploaded files on the local file system
   config.active_storage.service = :local
