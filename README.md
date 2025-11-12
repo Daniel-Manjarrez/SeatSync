@@ -182,7 +182,7 @@ bundle exec rspec spec/services/receipt_parser_spec.rb:11
 
 ### Expected Output for Running All RSpec Tests
 ```
-18 examples, 0 failures
+242 examples, 0 failures
 ```
 
 ## Running Cucumber Tests
@@ -205,8 +205,8 @@ bundle exec cucumber features/upload_receipt.feature:6
 
 ### Expected Output for Running All Cucumber Tests
 ```
-10 scenarios (10 passed)
-75 steps (75 passed)
+29 scenarios (29 passed)
+164 steps (164 passed)
 ```
 
 ### Run All Tests (RSpec + Cucumber)
