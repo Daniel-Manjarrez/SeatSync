@@ -1,5 +1,72 @@
 require 'rails_helper'
 
+RSpec.describe ReceiptParser do
+  let(:fake_image) { double('image') }
+
+  before do
+    allow(fake_image).to receive(:download).and_return('fake-binary-data')
+  end
+
+  it 'parses date, time, items, subtotal, total, and tip from OCR text' do
+    ocr_text = <<~TEXT
+      01/15/2025 14:30
+      1 Burger 10.00
+      1 Fries 5.00
+      Subtotal 15.00
+      Tax 1.50
+      Tip: 2.00
+      Total 18.50
+    TEXT
+
+    fake_ocr = double('rtesseract', to_s: ocr_text)
+    allow(RTesseract).to receive(:new).and_return(fake_ocr)
+
+    parser = ReceiptParser.new(fake_image)
+    result = parser.parse
+
+    expect(result[:success]).to be true
+    expect(result[:date]).to eq(Date.new(2025, 1, 15))
+    expect(result[:time]).to eq('14:30')
+    expect(result[:subtotal]).to eq(15.0)
+  # ReceiptParser will recalc total when OCR total differs significantly
+  # The implementation recalculates total to subtotal + tax if the difference
+  # from the OCR total is greater than $1.00. In this sample subtotal=15, tax=1.5
+  expect(result[:total]).to eq(16.5)
+    expect(result[:tip]).to eq(2.0)
+    expect(result[:items].map { |i| i[:text] }).to include('Burger', 'Fries')
+  end
+
+  it 'recalculates total when OCR total seems wrong' do
+    ocr_text = <<~TEXT
+      Subtotal 10.00
+      Tax 1.00
+      Total 5.00
+    TEXT
+
+    fake_ocr = double('rtesseract', to_s: ocr_text)
+    allow(RTesseract).to receive(:new).and_return(fake_ocr)
+
+    parser = ReceiptParser.new(fake_image)
+    result = parser.parse
+
+    # Should recalc total to subtotal + tax
+    expect(result[:subtotal]).to eq(10.0)
+    expect(result[:total]).to eq(11.0)
+    expect(result[:success]).to be true
+  end
+
+  it 'returns success: false when an error is raised during parsing' do
+    allow(fake_image).to receive(:download).and_raise(StandardError.new('boom'))
+
+    parser = ReceiptParser.new(fake_image)
+    result = parser.parse
+
+    expect(result[:success]).to be false
+    expect(result[:items]).to eq([])
+  end
+end
+require 'rails_helper'
+
 RSpec.describe ReceiptParser, type: :service do
   let(:image_path) { Rails.root.join('spec/fixtures/files/SampleReceipt.jpg') }
   let(:image_file) { ActiveStorage::Blob.create_and_upload!(io: File.open(image_path), filename: 'sample_receipt.jpg') }

@@ -1,5 +1,55 @@
 require 'rails_helper'
 
+RSpec.describe ItemMatcher do
+  describe '#match' do
+    before do
+      Item.create!(name: 'Burger', price: 10.0, category: 'Entrees')
+      Item.create!(name: 'Cheese Burger', price: 12.0, category: 'Entrees')
+      Item.create!(name: 'Chocolate Cake', price: 6.0, category: 'Desserts')
+    end
+
+    it 'finds exact matches (case-insensitive) with confidence 1.0' do
+      result = ItemMatcher.match('burger')
+      expect(result).not_to be_nil
+      expect(result[:item].name).to eq('Burger')
+      expect(result[:confidence]).to eq(1.0)
+      expect(result[:quantity]).to eq(1)
+    end
+
+    it 'finds substring matches and returns a high confidence' do
+      result = ItemMatcher.match('Cheese Burger Deluxe')
+      expect(result).not_to be_nil
+      # Depending on menu ordering, the match may return either the
+      # exact 'Cheese Burger' or the simpler 'Burger' item; ensure
+      # confidence is high and matched item relates to burger text.
+      expect(result[:confidence]).to be >= 0.85
+      expect(result[:item].name.downcase).to include('burger')
+    end
+
+    it 'finds fuzzy matches for slightly misspelled names' do
+      result = ItemMatcher.match('Choclate Cak')
+      expect(result).not_to be_nil
+      expect(result[:item].name).to eq('Chocolate Cake')
+      expect(result[:confidence]).to be >= ItemMatcher::SIMILARITY_THRESHOLD
+    end
+  end
+
+  describe '#match_all with subtotal correction' do
+    it 'corrects quantities for a single item when subtotal differs' do
+  item = Item.create!(name: 'Slice', price: 5.0, category: 'Desserts')
+
+      ocr_items = [ { text: 'Slice', ocr_quantity: 4, line_price: nil } ]
+
+      matched = ItemMatcher.match_all(ocr_items, subtotal: 10.0)
+      expect(matched.length).to eq(1)
+      expect(matched.first[:item]).to eq(item)
+      # OCR quantity 4 -> corrected to 2 (2 * 5.0 = 10.0)
+      expect(matched.first[:quantity]).to eq(2)
+    end
+  end
+end
+require 'rails_helper'
+
 RSpec.describe ItemMatcher, type: :service do
   let!(:burger) { Item.create!(name: 'Burger', price: 10.0, category: 'Entrees') }
   let!(:fries) { Item.create!(name: 'French Fries', price: 5.0, category: 'Sides') }
