@@ -58,3 +58,14 @@ Given('a receipt exists with date {string} and time {string}') do |date, time|
   receipt.receipt_items.create!(item: item1, quantity: 1)
   receipt.receipt_items.create!(item: item2, quantity: 1)
 end
+
+Given('the receipt parser will raise an error {string}') do |message|
+  allow_any_instance_of(ReceiptParser).to receive(:parse).and_raise(StandardError.new(message))
+end
+
+Given('saving the receipt will fail with {string}') do |message|
+  allow_any_instance_of(Receipt).to receive(:save) do |receipt|
+    receipt.errors.add(:base, message)
+    false
+  end
+end

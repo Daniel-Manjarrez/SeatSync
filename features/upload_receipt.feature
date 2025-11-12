@@ -21,3 +21,22 @@ Scenario: Dashboard displays existing receipts
   When I go to the receipts page
   Then I should see "2025-01-20"
   And I should see "12:00"
+
+Scenario: Attempt to upload without selecting an image
+  Given I am on the upload receipt page
+  When I press "Upload Photo"
+  Then I should see "Please select a receipt image"
+
+Scenario: Handle parser error when processing a receipt
+  Given I am on the upload receipt page
+  And the receipt parser will raise an error "Parsing failed"
+  When I attach a receipt image
+  And I press "Upload Photo"
+  Then I should see "Error processing receipt: Parsing failed"
+
+Scenario: Handle failure when saving the receipt record
+  Given I am on the upload receipt page
+  And saving the receipt will fail with "Validation error"
+  When I attach a receipt image
+  And I press "Upload Photo"
+  Then I should see "Failed to save receipt: Validation error"
