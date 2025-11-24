@@ -149,11 +149,13 @@ class AnalyticsCalculator
     last_week = receipts_in_week(1)
     
     return 0 if last_week.empty?
-    
+  
     this_revenue = calculate_revenue_for_receipts(this_week)
     last_revenue = calculate_revenue_for_receipts(last_week)
-    
-    ((this_revenue - last_revenue) / last_revenue * 100).round(2)
+  
+    return 0 if last_revenue == 0
+  
+    ((this_revenue - last_revenue) / last_revenue.to_f * 100).round(2)
   end
   
   def month_over_month_growth
