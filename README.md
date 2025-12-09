@@ -61,6 +61,7 @@ The application is deployed on Heroku and can be accessed at:
 - Rails 8.0
 - SQLite3 (for development/test)
 - Bundler
+- Azure OpenAI credentials (endpoint, API key, deployment name, API version)
 
 ### Setup Instructions
 
@@ -75,10 +76,13 @@ The application is deployed on Heroku and can be accessed at:
    bundle install
    ```
 
-3. **Install Tesseract OCR**
-   ```bash
-   sudo apt-get update
-   sudo apt-get install -y tesseract-ocr
+3. **Configure Environment**
+   Create a `.env` file in the project root with your Azure OpenAI settings:
+   ```
+   AZURE_OPENAI_ENDPOINT="https://<your-resource>.openai.azure.com"
+   AZURE_OPENAI_API_KEY="..."
+   AZURE_OPENAI_API_VERSION="2024-02-15-preview"
+   AZURE_OPENAI_CHAT_DEPLOYMENT="gpt-4o"
    ```
 
 4. **Setup Database**
