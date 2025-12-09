@@ -165,6 +165,41 @@ RSpec.describe ReceiptParser, type: :service do
     end
   end
 
+  describe '#extract_items' do
+    it 'extracts item lines with price patterns from receipt text' do
+      parser = ReceiptParser.new(image_file)
+      text = <<~TEXT
+        Restaurant Name
+        1 Burger 10.00
+        2 Fries 5.00
+        Subtotal 20.00
+        Tax 2.00
+        Total 22.00
+      TEXT
+
+      items = parser.send(:extract_items, text)
+      expect(items).to be_an(Array)
+      expect(items.length).to be > 0
+      # Method extracts lines matching price pattern
+      expect(items.any? { |item| item.match?(/Burger|Fries/) }).to be true
+    end
+
+    it 'removes exact duplicate lines' do
+      parser = ReceiptParser.new(image_file)
+      text = <<~TEXT
+        1 Pizza 15.00
+        1 Pizza 15.00
+        1 Soda 3.00
+      TEXT
+
+      items = parser.send(:extract_items, text)
+      # Method uses .uniq to remove exact duplicate lines
+      expect(items).to be_an(Array)
+      expect(items.length).to eq(2)  # Two unique lines (duplicate "1 Pizza 15.00" removed)
+      expect(items).to include(match(/Pizza/), match(/Soda/))
+    end
+  end
+
   describe '#extract_items_with_quantities' do
     it 'extracts items with quantities and prices' do
       parser = ReceiptParser.new(image_file)

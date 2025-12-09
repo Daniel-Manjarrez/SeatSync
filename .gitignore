@@ -75,3 +75,4 @@ yarn-debug.log*
 
 #
 CLAUDE.md
+.claude/

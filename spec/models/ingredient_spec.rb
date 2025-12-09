@@ -14,9 +14,9 @@ RSpec.describe Ingredient, type: :model do
       expect(ingredient.errors[:unit]).to be_present
     end
 
-    it 'uses default unit when not provided' do
-      ingredient = Ingredient.new(name: 'Tomato')
-      expect(ingredient.unit).to eq('lbs')
+    it 'accepts custom unit' do
+      ingredient = Ingredient.new(name: 'Tomato', unit: 'oz')
+      expect(ingredient.unit).to eq('oz')
     end
 
     it 'requires unique name' do

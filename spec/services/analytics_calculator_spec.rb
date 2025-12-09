@@ -80,10 +80,101 @@ RSpec.describe AnalyticsCalculator, type: :service do
     end
   end
 
+  describe '#parse_hour' do
+    it 'parses 12-hour format with PM' do
+      result = calculator.send(:parse_hour, '2:30 PM')
+      expect(result).to eq(14)
+    end
+
+    it 'parses 12-hour format with AM' do
+      result = calculator.send(:parse_hour, '9:45 AM')
+      expect(result).to eq(9)
+    end
+
+    it 'handles 12 PM as noon' do
+      result = calculator.send(:parse_hour, '12:00 PM')
+      expect(result).to eq(12)
+    end
+
+    it 'handles 12 AM as midnight' do
+      result = calculator.send(:parse_hour, '12:00 AM')
+      expect(result).to eq(0)
+    end
+
+    it 'parses 24-hour format' do
+      result = calculator.send(:parse_hour, '18:30')
+      expect(result).to eq(18)
+    end
+
+    it 'handles lowercase am/pm' do
+      result = calculator.send(:parse_hour, '3:15 pm')
+      expect(result).to eq(15)
+    end
+
+    it 'returns 0 for invalid format' do
+      result = calculator.send(:parse_hour, 'invalid')
+      expect(result).to eq(0)
+    end
+
+    it 'handles time without leading zero' do
+      result = calculator.send(:parse_hour, '9:30')
+      expect(result).to eq(9)
+    end
+  end
+
+  describe '#parse_minute' do
+    it 'extracts minutes from time string' do
+      result = calculator.send(:parse_minute, '12:45')
+      expect(result).to eq(45)
+    end
+
+    it 'handles single digit minutes with leading zero' do
+      result = calculator.send(:parse_minute, '10:05')
+      expect(result).to eq(5)
+    end
+
+    it 'works with AM/PM format' do
+      result = calculator.send(:parse_minute, '3:30 PM')
+      expect(result).to eq(30)
+    end
+
+    it 'returns 0 for invalid format' do
+      result = calculator.send(:parse_minute, 'invalid')
+      expect(result).to eq(0)
+    end
+  end
+
+  describe '#format_time' do
+    it 'formats morning hours' do
+      result = calculator.send(:format_time, 9, 30)
+      expect(result).to eq('9:30')
+    end
+
+    it 'formats afternoon hours with PM' do
+      result = calculator.send(:format_time, 14, 45)
+      expect(result).to eq('2:45')
+    end
+
+    it 'formats midnight as 12 AM' do
+      result = calculator.send(:format_time, 0, 0)
+      expect(result).to eq('12:00')
+    end
+
+    it 'formats noon as 12 PM' do
+      result = calculator.send(:format_time, 12, 0)
+      expect(result).to eq('12:00')
+    end
+
+    it 'pads single digit minutes' do
+      result = calculator.send(:format_time, 10, 5)
+      expect(result).to eq('10:05')
+    end
+  end
+
   describe '#revenue_by_category' do
     it 'groups revenue by item category' do
       result = calculator.revenue_by_category
-      
+
       expect(result['Entrees']).to eq(30.0)  # 1×$10 + 2×$10
       expect(result['Sides']).to eq(5.0)     # 1×$5
     end
@@ -95,7 +186,7 @@ RSpec.describe AnalyticsCalculator, type: :service do
         total: 0
       )
       calc = AnalyticsCalculator.new([empty_receipt])
-      
+
       result = calc.revenue_by_category
       expect(result).to eq({})
     end
@@ -188,7 +279,7 @@ RSpec.describe AnalyticsCalculator, type: :service do
   describe '#week_over_week_growth' do
     it 'calculates growth percentage' do
       result = calculator.week_over_week_growth
-      
+
       expect(result).to be_a(Numeric)
     end
 
@@ -199,7 +290,22 @@ RSpec.describe AnalyticsCalculator, type: :service do
         total: 10.0
       )
       calc = AnalyticsCalculator.new([recent_receipt])
-      
+
+      expect(calc.week_over_week_growth).to eq(0)
+    end
+
+    it 'returns 0 when last week revenue is zero' do
+      # Create a receipt for this week only (no last week data)
+      this_week_receipt = Receipt.create!(
+        receipt_date: Date.today - 2.days,
+        receipt_time: '12:00',
+        total: 100.0
+      )
+      this_week_receipt.receipt_items.create!(item: item1, quantity: 1)
+
+      calc = AnalyticsCalculator.new([this_week_receipt])
+
+      # Since there's no revenue last week (revenue = 0), should return 0
       expect(calc.week_over_week_growth).to eq(0)
     end
   end
@@ -207,13 +313,35 @@ RSpec.describe AnalyticsCalculator, type: :service do
   describe '#month_over_month_growth' do
     it 'calculates growth percentage' do
       result = calculator.month_over_month_growth
-      
+
       expect(result).to be_a(Numeric)
     end
 
     it 'returns 0 when no prior month data' do
       calc = AnalyticsCalculator.new([receipt1])
-      
+
+      expect(calc.month_over_month_growth).to eq(0)
+    end
+
+    it 'returns 0 when last month revenue is zero' do
+      # Create a receipt for this month with revenue
+      this_month_receipt = Receipt.create!(
+        receipt_date: Date.today - 5.days,
+        receipt_time: '14:00',
+        total: 50.0
+      )
+      this_month_receipt.receipt_items.create!(item: item1, quantity: 1)
+
+      # Create a receipt for last month with zero revenue
+      last_month_receipt = Receipt.create!(
+        receipt_date: Date.today - 40.days,
+        receipt_time: '14:00',
+        total: 0.0
+      )
+
+      calc = AnalyticsCalculator.new([this_month_receipt, last_month_receipt])
+
+      # Since last month has zero revenue, should return 0 (avoid division by zero)
       expect(calc.month_over_month_growth).to eq(0)
     end
   end

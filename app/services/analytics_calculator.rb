@@ -161,12 +161,14 @@ class AnalyticsCalculator
   def month_over_month_growth
     this_month = receipts_in_month(0)
     last_month = receipts_in_month(1)
-    
+
     return 0 if last_month.empty?
-    
+
     this_revenue = calculate_revenue_for_receipts(this_month)
     last_revenue = calculate_revenue_for_receipts(last_month)
-    
+
+    return 0 if last_revenue == 0
+
     ((this_revenue - last_revenue) / last_revenue * 100).round(2)
   end
   
