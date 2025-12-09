@@ -2,6 +2,8 @@
 
 SeatSync is a receipt tracking application that allows users to upload receipt images, automatically extract meal information (date, time, and food items), and view their expense history on a dashboard.
 
+For user testing: We recommend using PNG files and using one of our receipts in the "test_receipts" folder.
+
 ### Team Members
 
 | Name   | UNI  |
