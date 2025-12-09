@@ -51,7 +51,7 @@ puts "Creating menu items with recipes..."
 items_data = [
   {
     name: 'Chicken Parmesan',
-    price: 16.99,
+    price: 20.00,
     category: 'Entrees',
     recipes: {
       'Chicken' => 0.5,
@@ -63,7 +63,7 @@ items_data = [
   },
   {
     name: 'Eggplant Parmesan',
-    price: 14.99,
+    price: 18.00,
     category: 'Entrees',
     recipes: {
       'Eggplant' => 0.4,
@@ -75,7 +75,7 @@ items_data = [
   },
   {
     name: 'Meatball Parmesan',
-    price: 15.99,
+    price: 19.00,
     category: 'Entrees',
     recipes: {
       'Beef' => 0.4,
@@ -87,7 +87,7 @@ items_data = [
   },
   {
     name: 'Rigatoni with Vodka Sauce',
-    price: 13.99,
+    price: 17.00,
     category: 'Entrees',
     recipes: {
       'Pasta' => 0.5,
@@ -99,7 +99,7 @@ items_data = [
   },
   {
     name: 'Penne Scampi',
-    price: 17.99,
+    price: 22.00,
     category: 'Entrees',
     recipes: {
       'Pasta' => 0.5,
@@ -110,7 +110,7 @@ items_data = [
   },
   {
     name: 'Spaghetti and Meatballs',
-    price: 12.99,
+    price: 16.00,
     category: 'Entrees',
     recipes: {
       'Pasta' => 0.5,
@@ -122,7 +122,7 @@ items_data = [
   },
   {
     name: 'Baked Ziti',
-    price: 11.99,
+    price: 16.00,
     category: 'Entrees',
     recipes: {
       'Pasta' => 0.5,
@@ -134,7 +134,7 @@ items_data = [
   },
   {
     name: 'Caesar Salad',
-    price: 8.99,
+    price: 12.00,
     category: 'Appetizers',
     recipes: {
       'Lettuce' => 0.35,
@@ -145,7 +145,7 @@ items_data = [
   },
   {
     name: 'Fried Calamari',
-    price: 12.99,
+    price: 14.00,
     category: 'Appetizers',
     recipes: {
       'Calamari' => 0.4,
@@ -157,7 +157,7 @@ items_data = [
   },
   {
     name: 'Cannoli',
-    price: 5.99,
+    price: 8.00,
     category: 'Desserts',
     recipes: {
       'Flour' => 0.1,

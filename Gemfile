@@ -5,6 +5,7 @@ ruby '3.3'
 gem 'uglifier', '>= 1.3.0'
 
 gem 'rtesseract'
+gem 'ruby-openai'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '8.0'
@@ -30,6 +31,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'guard-rspec'
   gem 'rails-controller-testing'
+  gem 'dotenv-rails'
 
   # Use sqlite3 as the database for Active Record
   gem 'sqlite3', '~> 2.1'

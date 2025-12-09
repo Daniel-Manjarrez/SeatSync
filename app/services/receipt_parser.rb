@@ -1,8 +1,7 @@
-require 'rtesseract'
-
 class ReceiptParser
-  def initialize(image)
+  def initialize(image, ocr_client: LlmOcrClient.new)
     @image = image
+    @ocr_client = ocr_client
   end
 
   def parse
@@ -12,9 +11,9 @@ class ReceiptParser
     tempfile.write(@image.download)
     tempfile.rewind
 
-    # Run OCR
-    ocr = RTesseract.new(tempfile.path)
-    text = ocr.to_s.strip
+    # Run OCR with LLM
+    text = @ocr_client.extract_text(tempfile.path).strip
+    Rails.logger.warn "🧾 LLM OCR raw text:\n#{text}"
 
     # Extract values using regexes or heuristics
     subtotal = extract_subtotal(text)
@@ -33,7 +32,11 @@ class ReceiptParser
     {
       date: extract_date(text),
       time: extract_time(text),
-      items: extract_items_with_quantities(text),
+      items: begin
+        extracted = extract_items_with_quantities(text)
+        Rails.logger.warn "🧾 Extracted items (LLM OCR): #{extracted.inspect}"
+        extracted
+      end,
       subtotal: subtotal,
       total: total,
       tip: tip,
