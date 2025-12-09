@@ -18,10 +18,10 @@ RSpec.describe ReceiptParser do
       Total 18.50
     TEXT
 
-    fake_ocr = double('rtesseract', to_s: ocr_text)
-    allow(RTesseract).to receive(:new).and_return(fake_ocr)
+    fake_ocr_client = double('LlmOcrClient')
+    allow(fake_ocr_client).to receive(:extract_text).and_return(ocr_text)
 
-    parser = ReceiptParser.new(fake_image)
+    parser = ReceiptParser.new(fake_image, ocr_client: fake_ocr_client)
     result = parser.parse
 
     expect(result[:success]).to be true
@@ -43,10 +43,10 @@ RSpec.describe ReceiptParser do
       Total 5.00
     TEXT
 
-    fake_ocr = double('rtesseract', to_s: ocr_text)
-    allow(RTesseract).to receive(:new).and_return(fake_ocr)
+    fake_ocr_client = double('LlmOcrClient')
+    allow(fake_ocr_client).to receive(:extract_text).and_return(ocr_text)
 
-    parser = ReceiptParser.new(fake_image)
+    parser = ReceiptParser.new(fake_image, ocr_client: fake_ocr_client)
     result = parser.parse
 
     # Should recalc total to subtotal + tax
@@ -82,9 +82,10 @@ RSpec.describe ReceiptParser, type: :service do
     end
 
     it 'returns success flag when parsing succeeds' do
-      parser = ReceiptParser.new(image_file)
-      allow_any_instance_of(RTesseract).to receive(:to_s).and_return("Sample receipt text")
-      
+      fake_ocr_client = double('LlmOcrClient')
+      allow(fake_ocr_client).to receive(:extract_text).and_return("Sample receipt text")
+
+      parser = ReceiptParser.new(image_file, ocr_client: fake_ocr_client)
       result = parser.parse
       expect(result[:success]).to be true
     end
@@ -101,10 +102,11 @@ RSpec.describe ReceiptParser, type: :service do
     end
 
     it 'calculates total from subtotal and tax when OCR total is incorrect' do
-      parser = ReceiptParser.new(image_file)
+      fake_ocr_client = double('LlmOcrClient')
       ocr_text = "Subtotal 30.00\nTax 3.00\nTotal 33.00"
-      allow_any_instance_of(RTesseract).to receive(:to_s).and_return(ocr_text)
-      
+      allow(fake_ocr_client).to receive(:extract_text).and_return(ocr_text)
+
+      parser = ReceiptParser.new(image_file, ocr_client: fake_ocr_client)
       result = parser.parse
       expect(result[:subtotal]).to eq(30.0)
       expect(result[:total]).to eq(33.0)

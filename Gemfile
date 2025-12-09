@@ -4,7 +4,6 @@ ruby '3.3'
 
 gem 'uglifier', '>= 1.3.0'
 
-gem 'rtesseract'
 gem 'ruby-openai'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'

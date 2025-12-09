@@ -9,18 +9,19 @@ end
 Given('the OCR engine will return that text') do
   raise 'OCR text not defined' unless @ocr_text
 
-  ocr_double = instance_double('RTesseract', to_s: @ocr_text)
-  allow(RTesseract).to receive(:new).and_return(ocr_double)
+  @fake_ocr_client = instance_double('LlmOcrClient')
+  allow(@fake_ocr_client).to receive(:extract_text).and_return(@ocr_text)
 end
 
 Given('the OCR engine will raise {string}') do |message|
-  allow(RTesseract).to receive(:new).and_raise(StandardError.new(message))
+  @fake_ocr_client = instance_double('LlmOcrClient')
+  allow(@fake_ocr_client).to receive(:extract_text).and_raise(StandardError.new(message))
 end
 
 When('I parse the receipt image') do
   raise 'Fake receipt image not configured' unless @fake_receipt_image
 
-  parser = ReceiptParser.new(@fake_receipt_image)
+  parser = ReceiptParser.new(@fake_receipt_image, ocr_client: @fake_ocr_client)
   @parsed_receipt = parser.parse
 end
 
