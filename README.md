@@ -213,3 +213,18 @@ bundle exec cucumber features/upload_receipt.feature:6
 ```bash
 bundle exec rspec && bundle exec cucumber
 ```
+
+### Erase Database + Cached Data, Then Repopulate Seed
+```bash
+rails console
+
+ReceiptItem.delete_all
+Receipt.delete_all
+ActiveStorage::Attachment.where(record_type: "Receipt").find_each(&:purge)
+ActiveStorage::Blob.joins(:attachments).where(active_storage_attachments: { record_type: "Receipt" }).find_each(&:purge)
+Rails.cache.clear
+
+exit
+
+rails db:seed
+```
