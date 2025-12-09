@@ -5,7 +5,7 @@ Quick setup guide to get the project running.
 ## Prerequisites
 
 - Ruby 3.3.0
-- Tesseract OCR
+- Azure OpenAI credentials (endpoint, API key, deployment name, API version)
 
 ## Setup
 
@@ -16,20 +16,20 @@ rbenv install 3.3.0
 rbenv local 3.3.0
 ```
 
-### 2. Install Tesseract
-
-```bash
-# macOS
-brew install tesseract
-
-# Ubuntu/Debian
-sudo apt-get install tesseract-ocr
-```
-
-### 3. Install Dependencies
+### 2. Install Dependencies
 
 ```bash
 bundle install
+```
+
+### 3. Configure Environment
+
+Create a `.env` file (or export variables) with your Azure OpenAI settings:
+```
+AZURE_OPENAI_ENDPOINT="https://<your-resource>.openai.azure.com"
+AZURE_OPENAI_API_KEY="..."
+AZURE_OPENAI_API_VERSION="2024-02-15-preview"
+AZURE_OPENAI_CHAT_DEPLOYMENT="gpt-4o"
 ```
 
 ### 4. Setup Database
@@ -104,11 +104,6 @@ bundle exec cucumber
 
 ## Troubleshooting
 
-**"Tesseract not found"**
-```bash
-which tesseract  # Verify installation
-```
-
 **OCR not matching items**
 - Check image quality
 - View Rails logs for OCR output
@@ -125,4 +120,3 @@ which tesseract  # Verify installation
 ---
 
 **You're ready to go!** 🚀
-
